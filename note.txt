@@ -1,3 +1,4 @@
 1. check .exe
 2. capture screen 
-3. botnet
+3. keystroke
+4. Network
