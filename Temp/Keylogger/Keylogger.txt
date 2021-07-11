@@ -1,0 +1,7 @@
+a l s k d h w a l i d h 
+shortcut Copy
+ 
+shortcut Paste
+ \x13 
+shortcut All
+ 

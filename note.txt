@@ -1,4 +1,4 @@
 1. check .exe
 2. capture screen 
-3. keystroke
-4. Network
+3. keylogger
+4. symmetic key
