@@ -1,2 +1,0 @@
-asdKey.upKey.leftKey.downKey.rightKey.upKey.leftKey.downKey.rightKey.uphowKey.spacetoKey.spacestopKey.spacecodeKey.spaceKey.downKey.down
-Key.f1Key.f1

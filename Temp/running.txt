@@ -1,0 +1,66 @@
+
+Image Name                     PID Session Name        Session#    Mem Usage
+========================= ======== ================ =========== ============
+csrss.exe                     3152 Console                    6      3,172 K
+dwm.exe                       7516 Console                    6     36,488 K
+atieclxx.exe                 18336 Console                    6      3,548 K
+NVDisplay.Container.exe      10592 Console                    6     15,492 K
+AsusOptimizationStartupTa    13504 Console                    6      3,424 K
+nvcontainer.exe              12156 Console                    6      6,060 K
+nvcontainer.exe               7336 Console                    6     14,592 K
+sihost.exe                    9528 Console                    6     29,992 K
+svchost.exe                   3916 Console                    6     20,120 K
+taskhostw.exe                 8828 Console                    6     11,796 K
+explorer.exe                 13996 Console                    6    112,948 K
+NVIDIA Web Helper.exe        14156 Console                    6      8,472 K
+svchost.exe                   8120 Console                    6     24,980 K
+StartMenuExperienceHost.e    11572 Console                    6     51,796 K
+RuntimeBroker.exe            18800 Console                    6      8,300 K
+SearchApp.exe                10888 Console                    6    189,148 K
+RuntimeBroker.exe            14812 Console                    6     19,244 K
+LockApp.exe                  10552 Console                    6      2,096 K
+ctfmon.exe                   11204 Console                    6     10,916 K
+RuntimeBroker.exe             6536 Console                    6     10,708 K
+SettingSyncHost.exe          14808 Console                    6      5,808 K
+nvsphelper64.exe             16808 Console                    6      2,976 K
+NVIDIA Share.exe             16904 Console                    6     14,332 K
+SecurityHealthSystray.exe    14820 Console                    6      4,088 K
+700MHID.exe                  15284 Console                    6      3,548 K
+trayicon.exe                 19044 Console                    6      2,240 K
+AsusOSD.exe                   4196 Console                    6      4,356 K
+ApplicationFrameHost.exe      8624 Console                    6     20,016 K
+RtkAudUService64.exe         13832 Console                    6      1,080 K
+ShellExperienceHost.exe       7752 Console                    6      2,832 K
+RuntimeBroker.exe            15292 Console                    6      4,976 K
+AsusSoftwareManagerAgent.    10308 Console                    6      7,072 K
+ArmouryCrate.UserSessionH     1672 Console                    6     24,024 K
+dllhost.exe                  18824 Console                    6      8,192 K
+jucheck.exe                   1516 Console                    6      2,760 K
+TextInputHost.exe              928 Console                    6     11,964 K
+JOOX.exe                      2964 Console                    6     61,072 K
+JOOX.exe                     10400 Console                    6      3,172 K
+JOOX.exe                     11976 Console                    6     56,852 K
+RtkUWP.exe                   12680 Console                    6      2,044 K
+MusNotifyIcon.exe            12796 Console                    6        912 K
+msedge.exe                   11920 Console                    6    175,996 K
+msedge.exe                    3316 Console                    6      2,828 K
+msedge.exe                   13164 Console                    6    169,848 K
+conhost.exe                  17364 Console                    6      1,860 K
+Code.exe                     18232 Console                    6     42,180 K
+Code.exe                      9676 Console                    6      3,140 K
+Code.exe                     14592 Console                    6     94,240 K
+conhost.exe                  15688 Console                    6      2,036 K
+powershell.exe               13872 Console                    6     10,276 K
+conhost.exe                  18852 Console                    6      1,984 K
+SystemSettings.exe           15948 Console                    6        736 K
+Video.UI.exe                 12872 Console                    6        468 K
+Calculator.exe               19816 Console                    6        492 K
+Discord.exe                  18628 Console                    6     31,668 K
+Discord.exe                  12400 Console                    6      4,052 K
+Discord.exe                   2896 Console                    6     26,184 K
+Discord.exe                  17916 Console                    6    149,276 K
+taskhostw.exe                20168 Console                    6     15,584 K
+YourPhone.exe                10088 Console                    6      1,548 K
+smartscreen.exe               3032 Console                    6     24,452 K
+notepad.exe                  11616 Console                    6     16,936 K
+dllhost.exe                  20124 Console                    6     12,132 K
