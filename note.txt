@@ -1,4 +1,16 @@
 1. check .exe
 2. capture screen 
 3. keylogger
-4. symmetic key
+4. taskkill
+5. subprocess
+
+
+
+
+
+
+
+
+
+
+soon. symmetic key
