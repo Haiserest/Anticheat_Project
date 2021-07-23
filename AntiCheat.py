@@ -17,15 +17,7 @@ def time(s):
 def capture():
     x = str(datetime.datetime.now().strftime("%d %b %Y_%H%M00"))
     x += "_Time"
-    #print(x)
     pyautogui.screenshot().save('Temp\\Capture\\'+ x +'.jpg')
-
-def cmd():
-    subprocess.run("mkdir Temp\\Capture", shell=True)
-    
-def rename():
-    subprocess.run("rename Temp " + id, shell=True)
-    subprocess.run("del \""+id+"\\running.txt\"", shell=True)
 
 def keylogger():
 
@@ -49,21 +41,18 @@ def tasklist():
         f.write(running)
         f.close()
 
-
 def endApp():
-    subprocess.run('taskkill /IM python.exe /F', shell=True)
-
-def act():
     tasklist()
-    rename()
-    endApp()
+    subprocess.run("rename Temp " + id, shell=True)
+    subprocess.run("del \""+id+"\\running.txt\"", shell=True)
+    subprocess.run('taskkill /IM python.exe /F', shell=True)
 
 
 def student(): 
     global id
     id = id_entry.get()
     if id :
-        cmd()
+        subprocess.run("mkdir Temp\\Capture", shell=True)
         txt = "Create : " + id
         messagebox.showinfo(title="Success!!", message=txt)
 
@@ -96,7 +85,7 @@ def student():
         clock()
         keylogger()
 
-        btn_end = Button(Window, text="Finish Test", font="Raleway", command=act)
+        btn_end = Button(Window, text="Finish Test", font="Raleway", command=endApp)
         btn_end.pack(padx=20, pady=10)
 
         Window.mainloop()

