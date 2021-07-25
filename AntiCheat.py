@@ -67,11 +67,11 @@ def student():
             ####### fix mean set time to capture detect
             fix = "145900"
             timeout = "145930"
-
+            time_check = 10
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
-
+            print(str(minute))
             if hour+minute+second == fix:
                 print("detect")
                 tasklist()
@@ -82,6 +82,10 @@ def student():
                 print("timeout")
                 messagebox.showwarning(title="Time Out", message="Time Out")
                 endApp()
+
+
+            if (int(minute) % time_check == 0):
+                print("cap")
 
 
             timer = hour + ":" + minute + ":" + second

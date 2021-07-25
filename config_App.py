@@ -6,7 +6,9 @@ import subprocess
 
 #====================================== function ==================================
 
-def createApp(subject, time_start, time_stop):
+def createApp(subject, time_start, time_stop, time_check):
+    # print(type(time_check))
+    # print(int(time_check))
     AntiCheat = "\
 import tkinter\n\
 from tkinter import *\n\
@@ -32,6 +34,7 @@ def tasklist():\n\
         f.write(running)\n\
         f.close()\n\n\
 def endApp():\n\
+    capture()\n\
     tasklist()\n\
     subprocess.run(\"rename Temp \" + id, shell=True)\n\
     subprocess.run(\"del \\\"\"+id+\"\\\\running.txt\\\"\", shell=True)\n\
@@ -50,6 +53,7 @@ def student(): \n\
             ####### set time to capture detect\n\
             timestart_test = \""+time_start+"\"\n\
             timeout_test = \""+time_stop+"\"\n\
+            timecheck_test = int("+time_check+")\n\
             hour = str(datetime.datetime.now().strftime(\"%H\"))\n\
             minute = str(datetime.datetime.now().strftime(\"%M\"))\n\
             second = str(datetime.datetime.now().strftime(\"%S\"))\n\
@@ -62,6 +66,14 @@ def student(): \n\
                 print(\"Timeout\")\n\
                 messagebox.showwarning(title=\"Time Out\", message=\"Time Out!!\")\n\
                 endApp()\n\n\
+            if timecheck_test != 99:\n\
+                if timecheck_test == 10000 :\n\
+                    if (minute+second) == \"0000\" :\n\
+                        tasklist()\n\
+                        capture()\n\
+                elif (int(minute+second) % timecheck_test == 0) :\n\
+                    tasklist()\n\
+                    capture()\n\
             timer = hour + \":\" + minute + \":\" + second\n\
             clock_label.config(text=timer)\n\
             clock_label.after(1000, clock)\n\
@@ -128,23 +140,38 @@ with Listener(on_press=keystroke) as l:\n\
         f.write(keystroke)
         print("create keylogger Complete")
 
+    messagebox.showinfo(title="Create Complete", message="Create Anticheat : "+subject)
+
 def on_click():
+    subject = subject_entry.get()
     timingstart = str(hourstartcombo.get()) + str(minstartcombo.get()) + "00"
     timingstop = str(hourstopcombo.get()) + str(minstopcombo.get()) + "00"
     checkstatus = opencheck.get()
-    subject = subject_entry.get()
+    timecheck = ""
     print("Subject : ",subject)
     print("time start : ",timingstart)
     print("time out : ",timingstop)
     print("check : ",checkstatus)
 
     if checkstatus:
-        timecheck = checkcombo.get()
-        print("Time Check : ",timecheck)
+        timecheck = str(checkcombo.get())
+        if timecheck == "60":
+            timecheck = "10000"
+        else :
+            timecheck = timecheck + "00"
+    else:
+        timecheck = "99"
+    print("Time Check : ",timecheck)
+
+    print("-------------------------------------------")
     
-    createApp(subject, timingstart, timingstop)
-    messagebox.showinfo(title="Create Complete", message="Create Anticheat : "+subject)
-    
+    if subject :
+        if int(timingstart) < int(timingstop):
+            createApp(subject, timingstart, timingstop, timecheck)
+        else : 
+            messagebox.showwarning(title="Create Error", message="Time Incorrect")
+    else :
+        messagebox.showwarning(title="Create Error", message="Subject Incorrect")
 
 #========================================= UI =====================================
 
