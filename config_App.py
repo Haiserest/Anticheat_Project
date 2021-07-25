@@ -6,7 +6,7 @@ import subprocess
 
 #====================================== function ==================================
 
-def createApp(subject, timing):
+def createApp(subject, time_start, time_stop):
     AntiCheat = "\
 import tkinter\n\
 from tkinter import *\n\
@@ -16,15 +16,11 @@ import pyautogui\n\
 import subprocess\n\n\
 # capture \n\
 def capture():\n\
-    x = str(datetime.datetime.now().strftime(\"%d %b %Y_%H%M00\"))\n\
+    x = str(datetime.datetime.now().strftime(\"%d %b %Y_%H%M%S\"))\n\
     x += \"_Time\"\n\
     pyautogui.screenshot().save('Temp\\\Capture\\\\'+ x +'.jpg')\n\n\
-def keylogger():\n\n\
-    ####### fix mean set time to capture detect\n\
-    fix = \""+timing+"\"\n\n\
-    t = str(datetime.datetime.now().strftime(\"%H\")) + str(datetime.datetime.now().strftime(\"%M\")) +  str(datetime.datetime.now().strftime(\"%S\"))\n\
-    if t >= fix:\n\
-        subprocess.Popen(\"python " + subject + "\\Keyst.py\", shell=True)\n\n\
+def keylogger():\n\
+    subprocess.Popen(\"python " + subject + "\\Keyst.py\", shell=True)\n\n\
 def tasklist():\n\
     subprocess.run(\"tasklist /fi \\\"STATUS eq RUNNING\\\" > Temp\\\\running.txt\", shell=True)\n\
     with open(\"Temp/running.txt\", 'r') as r:\n\
@@ -51,22 +47,27 @@ def student(): \n\
         Window.title(\"Window\")\n\
         Window.geometry(\"300x150\")\n\n\
         def clock():\n\
-            ####### fix mean set time to capture detect\n\
-            fix = \""+timing+"\"\n\
+            ####### set time to capture detect\n\
+            timestart_test = \""+time_start+"\"\n\
+            timeout_test = \""+time_stop+"\"\n\
             hour = str(datetime.datetime.now().strftime(\"%H\"))\n\
             minute = str(datetime.datetime.now().strftime(\"%M\"))\n\
             second = str(datetime.datetime.now().strftime(\"%S\"))\n\
-            if hour+minute+second == fix:\n\
+            if hour+minute+second == timestart_test:\n\
                 print(\"detect\")\n\
                 tasklist()\n\
                 capture()\n\
+                keylogger()\n\
+            elif hour+minute+second == timeout_test:\n\
+                print(\"Timeout\")\n\
+                messagebox.showwarning(title=\"Time Out\", message=\"Time Out!!\")\n\
+                endApp()\n\n\
             timer = hour + \":\" + minute + \":\" + second\n\
             clock_label.config(text=timer)\n\
             clock_label.after(1000, clock)\n\
         clock_label = Label(Window, text=\"\", font=(\"Raleway\", 20))\n\
         clock_label.pack(padx=20, pady=20)\n\
         clock()\n\
-        keylogger()\n\
         btn_end = Button(Window, text=\"Finish Test\", font=\"Raleway\", command=endApp)\n\
         btn_end.pack(padx=20, pady=10)\n\
         Window.mainloop()\n\
@@ -128,25 +129,29 @@ with Listener(on_press=keystroke) as l:\n\
         print("create keylogger Complete")
 
 def on_click():
-    timing = str(hourcombo.get()) + str(mincombo.get()) + "00"
+    timingstart = str(hourstartcombo.get()) + str(minstartcombo.get()) + "00"
+    timingstop = str(hourstopcombo.get()) + str(minstopcombo.get()) + "00"
     checkstatus = opencheck.get()
     subject = subject_entry.get()
     print("Subject : ",subject)
-    print("time : ",timing)
+    print("time start : ",timingstart)
+    print("time out : ",timingstop)
     print("check : ",checkstatus)
 
     if checkstatus:
         timecheck = checkcombo.get()
         print("Time Check : ",timecheck)
     
-    createApp(subject, timing)
+    createApp(subject, timingstart, timingstop)
+    messagebox.showinfo(title="Create Complete", message="Create Anticheat : "+subject)
+    
 
 #========================================= UI =====================================
 
 App = tkinter.Tk()
 App.title("Anticheat Config")
 App.columnconfigure([0,1,2,3,4,5,6,7], minsize=50)
-App.rowconfigure([0,1,2,3,4,5,6,7,8], minsize=30)
+App.rowconfigure([0,1,2,3,4,5,6,7,8,9,10], minsize=30)
 
 min = []
 hour = []
@@ -162,50 +167,73 @@ for i in range(61):
         min.append(i)
 
 subject_label = Label(App, text="Subject : ", font="Raleway")
-
 subject_entry = Entry(App, width=30)
 
 subject_label.grid(row=1, column=1)
-subject_entry.grid(row=1, column=3)
+subject_entry.grid(row=1, column=3, columnspan=2)
 
 
-text_label = Label(App, text="Set Time Test", font="Raleway")
+start_label = Label(App, text="Start Time ", font="Raleway")
 
-hour_label = Label(App, text=">> ", font="Raleway")
-hourcombo = tkinter.StringVar()
-hour_combobox = ttk.Combobox(App, width=7, textvariable = hourcombo)
-hour_combobox['values'] = hour
+hourstartcombo = tkinter.StringVar()
+hourstart_combobox = ttk.Combobox(App, width=7, textvariable = hourstartcombo)
+hourstart_combobox['values'] = hour
 
-min_label = Label(App, text=" : ", font="Raleway")
-mincombo = tkinter.StringVar()
-min_combobox = ttk.Combobox(App, width=7, textvariable = mincombo)
-min_combobox['values'] = min
+minstart_label = Label(App, text=" : ", font="Raleway")
+minstartcombo = tkinter.StringVar()
+minstart_combobox = ttk.Combobox(App, width=7, textvariable = minstartcombo)
+minstart_combobox['values'] = min
 
-text_label.grid(row=3, column=1)
-hour_label.grid(row=3, column=3)
-hour_combobox.grid(row=3, column=4)
-hour_combobox.current(0)
-min_label.grid(row=3, column=5)
-min_combobox.grid(row=3, column=6)
-min_combobox.current(0)
+start_label.grid(row=3, column=1)
+
+hourstart_combobox.grid(row=3, column=3)
+hourstart_combobox.current(0)
+minstart_label.grid(row=3, column=4)
+minstart_combobox.grid(row=3, column=5)
+minstart_combobox.current(0)
+
+
+stop_label = Label(App, text="Time Out ", font="Raleway")
+
+hourstopcombo = tkinter.StringVar()
+hourstop_combobox = ttk.Combobox(App, width=7, textvariable = hourstopcombo)
+hourstop_combobox['values'] = hour
+
+minstop_label = Label(App, text=" : ", font="Raleway")
+minstopcombo = tkinter.StringVar()
+minstop_combobox = ttk.Combobox(App, width=7, textvariable = minstopcombo)
+minstop_combobox['values'] = min
+
+stop_label.grid(row=5, column=1)
+
+hourstop_combobox.grid(row=5, column=3)
+hourstop_combobox.current(0)
+minstop_label.grid(row=5, column=4)
+minstop_combobox.grid(row=5, column=5)
+minstop_combobox.current(0)
 
 
 opencheck = BooleanVar()
 open_label = Label(App, text="Open Check : ", font="Raleway")
 
-Checkbutton(App, variable=opencheck).grid(row=5, column=3)
-check_label = Label(App, text="Time check : ", font="Raleway").grid(row=5, column=4)
+check_label = Label(App, text="Time check ", font="Raleway")
 checkcombo = tkinter.StringVar()
 check_combobox = ttk.Combobox(App, width=7, textvariable= checkcombo)
 check_combobox['values'] = (5,10,15,20,30,60)
 
-a1 = Label(App, text="Minute", font="Raleway").grid(row=5, column=6)
-
-check_combobox.grid(row=5, column=5)
+open_label.grid(row=7, column=1)
+Checkbutton(App, variable=opencheck).grid(row=7, column=3)
+check_label.grid(row=7, column=4)
+check_combobox.grid(row=7, column=5)
 check_combobox.current(0)
-open_label.grid(row=5, column=1)
+a1 = Label(App, text="Minute", font="Raleway").grid(row=7, column=6)
+check_refer = Label(App, text="*Function Time check will activate if check in Open check")
+check_refer.config(fg="red")
+check_refer.grid(row=8, column=3, columnspan=4)
 
 submit_btc = Button(App, text="Build", font="Raleway",  command=on_click)
-submit_btc.grid(row=7, column=3)
+submit_btc.grid(row=9, column=2)
+exit_btc = Button(App, text="Exit", font="Raleway", command=quit)
+exit_btc.grid(row=9, column=4)
 
 App.mainloop()

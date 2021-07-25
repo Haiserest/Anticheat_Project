@@ -15,18 +15,20 @@ def time(s):
 
 # capture 
 def capture():
-    x = str(datetime.datetime.now().strftime("%d %b %Y_%H%M00"))
+    x = str(datetime.datetime.now().strftime("%d %b %Y_%H%M%S"))
     x += "_Time"
     pyautogui.screenshot().save('Temp\\Capture\\'+ x +'.jpg')
 
 def keylogger():
+    subprocess.Popen('python material\\Keylogger.py', shell=True)
 
-    ####### fix mean set time to capture detect
-    fix = "162400"
-
-    t = str(datetime.datetime.now().strftime("%H")) + str(datetime.datetime.now().strftime("%M")) +  str(datetime.datetime.now().strftime("%S"))
-    if t >= fix:
-        subprocess.Popen('python material\\Keylogger.py', shell=True)
+    # ####### fix mean set time to capture detect
+    # fix = "145700"
+    # print("keylogger")
+    # t = str(datetime.datetime.now().strftime("%H")) + str(datetime.datetime.now().strftime("%M")) +  str(datetime.datetime.now().strftime("%S"))
+    # print(t)
+    # if t >= fix:
+    #     subprocess.Popen('python material\\Keylogger.py', shell=True)
 
 def tasklist():
     subprocess.run("tasklist /fi \"STATUS eq RUNNING\" > Temp\\running.txt", shell=True)
@@ -63,7 +65,9 @@ def student():
         def clock():
    
             ####### fix mean set time to capture detect
-            fix = "161400"
+            fix = "145900"
+            timeout = "145930"
+
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
@@ -72,6 +76,12 @@ def student():
                 print("detect")
                 tasklist()
                 capture()
+                keylogger()
+            
+            elif hour+minute+second == timeout:
+                print("timeout")
+                messagebox.showwarning(title="Time Out", message="Time Out")
+                endApp()
 
 
             timer = hour + ":" + minute + ":" + second
@@ -83,8 +93,7 @@ def student():
         clock_label.pack(padx=20, pady=20)
 
         clock()
-        keylogger()
-
+        
         btn_end = Button(Window, text="Finish Test", font="Raleway", command=endApp)
         btn_end.pack(padx=20, pady=10)
 
