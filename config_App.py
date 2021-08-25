@@ -3,10 +3,47 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 import subprocess
+import os
+from Crypto.Cipher import AES
+from Crypto.PublicKey import RSA
+from Crypto.Random import get_random_bytes
 
+#=====================key==============================
+
+def generateAESkey(subject):
+    # key AES 256 bits
+    key = get_random_bytes(32)
+
+    # save AES key
+    fileAES = subject+"/File_Generate/AESkey"
+    os.makedirs(os.path.dirname(fileAES), exist_ok=True)
+    with open(fileAES, 'wb') as f:
+        f.write(key)
+        f.close()
+        
+
+def generateRSAkey(subject):
+    # generate key 2048 bits
+    key = RSA.generate(2048)
+
+    Private_Key = key.exportKey('PEM')
+    Public_Key = key.publickey().exportKey('PEM')
+
+    Private_key_file = subject+"/File_Generate/Private_Key.pem"
+    os.makedirs(os.path.dirname(Private_key_file), exist_ok=True)
+    with open(Private_key_file, 'wb') as f:
+        f.write(Private_Key)
+        f.close()
+
+    Public_key_file = subject+"/File_Generate/Public_Key.pem"
+    os.makedirs(os.path.dirname(Public_key_file), exist_ok=True)
+    with open(Public_key_file, 'wb') as f:
+        f.write(Public_Key)
+        f.close()
+        
 #====================================== function ==================================
 
-def createApp(subject, time_start, time_stop, time_check):
+def createApp(subject, time_start, time_stop):
     # print(type(time_check))
     # print(int(time_check))
     AntiCheat = "\
@@ -15,26 +52,51 @@ from tkinter import *\n\
 from tkinter import messagebox\n\
 import datetime\n\
 import pyautogui\n\
-import subprocess\n\n\
+import subprocess\n\
+import wmi\n\n\
+def monitor():\n\
+    obj = wmi.WMI().Win32_PnPEntity(ConfigManagerErrorCode=0)\n\
+    displays = [x for x in obj if 'DISPLAY' in str(x)]\n\
+    i = 0\n\
+    for item in displays:\n\
+        #print(item)\n\
+        i +=1\n\
+    i-=1\n\
+    if i == 1:\n\
+        display = 'single Monitor\\n'\n\
+    elif i > 1:\n\
+        display = 'Multi Monitor : [' + str(i) + ']\\n'\n\
+    task = 'Temp/exe.txt'\n\
+    with open(task, 'a') as f:\n\
+        f.write(display)\n\
 # capture \n\
 def capture():\n\
     x = str(datetime.datetime.now().strftime(\"%d %b %Y_%H%M%S\"))\n\
-    x += \"_Time\"\n\
     pyautogui.screenshot().save('Temp\\\Capture\\\\'+ x +'.jpg')\n\n\
 def keylogger():\n\
-    subprocess.Popen(\"python " + subject + "\\Keyst.py\", shell=True)\n\n\
+    subprocess.Popen(\"python " + subject + "\\Keyst.py\", shell=True)\n\
+    subprocess.Popen('python " + subject + "\\mc.py', shell=True)\n\
 def tasklist():\n\
     subprocess.run(\"tasklist /fi \\\"STATUS eq RUNNING\\\" > Temp\\\\running.txt\", shell=True)\n\
     with open(\"Temp/running.txt\", 'r') as r:\n\
-        running = r.read()\n\n\
-    task = \"Temp/exe.txt\"\n\
-    with open(task, 'a') as f:\n\
-        tasktime = str(datetime.datetime.now().strftime(\"Detect Time >> %H : %M : %S\\n\"))\n\
-        f.write(tasktime)\n\
-        f.write(running)\n\
-        f.close()\n\n\
+        x = r.read()\n\
+        detect = ''\n\
+    if (x.find('TeamSpeak') >= 0 ) or (x.find('Skype') >=0 ) or (x.find('Discord') >= 0):\n\
+        if (x.find('TeamSpeak') >= 0 ):\n\
+            detect += 'TeamSpeaker\\n'\n\
+        if (x.find('Skype') >=0 ):\n\
+            detect += 'Skype\\n'\n\
+        if (x.find('Discord') >= 0):\n\
+            detect += 'Discord\\n'\n\
+        else:\n\
+            print('pass')\n\
+        task = 'Temp/exe.txt'\n\
+        with open(task, 'a') as f:\n\
+            tasktime = str(datetime.datetime.now().strftime('Time >> %H : %M : %S\\n'))\n\
+            f.write(tasktime)\n\
+            f.write(detect)\n\
+            f.close()\n\n\
 def endApp():\n\
-    capture()\n\
     tasklist()\n\
     subprocess.run(\"rename Temp \" + id, shell=True)\n\
     subprocess.run(\"del \\\"\"+id+\"\\\\running.txt\\\"\", shell=True)\n\
@@ -53,12 +115,12 @@ def student(): \n\
             ####### set time to capture detect\n\
             timestart_test = \""+time_start+"\"\n\
             timeout_test = \""+time_stop+"\"\n\
-            timecheck_test = int("+time_check+")\n\
             hour = str(datetime.datetime.now().strftime(\"%H\"))\n\
             minute = str(datetime.datetime.now().strftime(\"%M\"))\n\
             second = str(datetime.datetime.now().strftime(\"%S\"))\n\
             if hour+minute+second == timestart_test:\n\
-                print(\"detect\")\n\
+                print(\"Start App\")\n\
+                monitor()\n\
                 tasklist()\n\
                 capture()\n\
                 keylogger()\n\
@@ -66,14 +128,6 @@ def student(): \n\
                 print(\"Timeout\")\n\
                 messagebox.showwarning(title=\"Time Out\", message=\"Time Out!!\")\n\
                 endApp()\n\n\
-            if timecheck_test != 99:\n\
-                if timecheck_test == 10000 :\n\
-                    if (minute+second) == \"0000\" :\n\
-                        tasklist()\n\
-                        capture()\n\
-                elif (int(minute+second) % timecheck_test == 0) :\n\
-                    tasklist()\n\
-                    capture()\n\
             timer = hour + \":\" + minute + \":\" + second\n\
             clock_label.config(text=timer)\n\
             clock_label.after(1000, clock)\n\
@@ -110,6 +164,9 @@ def keystroke(key):\n\
     if key == \"\\\\x16\":\n\
         key = \"\\nshortcut Paste\\n\"\n\
         capturekey(\"_Paste\")\n\
+    if key == \"\\\\x06\":\n\
+        key = \"\\nshortcut search\\n\"\n\
+        capturekey(\"_Search\")\n\
     if key == \"Key.print_screen \":\n\
         key = \"\\nprint screen\\n\"\n\
         capturekey(\"_capture\")\n\
@@ -127,6 +184,40 @@ def capturekey(k):\n\
 with Listener(on_press=keystroke) as l:\n\
     l.join()\n\
                     "
+    
+    mic = "\
+import speech_recognition as speech\n\
+import subprocess\n\
+import datetime\n\
+import pyautogui\n\
+from gtts import gTTS, lang, tts\n\
+def capture(k):\n\
+    x = str(datetime.datetime.now().strftime(\"%d %b %Y_%H%M%S\"))\n\
+    x += k\n\
+    pyautogui.screenshot().save('Temp\\\\Capture\\\\'+ x +'.jpg')\n\
+data = speech.Recognizer()\n\
+print('start')\n\
+with speech.Microphone() as source:\n\
+    while True:\n\
+        audio = data.listen(source)\n\
+        try:\n\
+            sound = str(data.recognize_google(audio, None,'th'))\n\
+            tts = gTTS(text=sound, lang=\"th\")\n\
+            if sound.find('ตอบอะไร') >= 0:\n\
+                subprocess.run(\"tasklist /fi \\\"STATUS eq RUNNING\\\" > running.txt\", shell=True)\n\
+                with open('running.txt', 'r') as f:\n\
+                    x = f.read()\n\
+                subprocess.run(\"del \\\"running.txt\\\"\", shell=True)\n\
+                if (x.find('TeamSpeak') >= 0 ) or (x.find('Skype') >=0 ) or (x.find('Discord') >= 0):\n\
+                    print('detect')\n\
+                    filename = \"Temp\\\\\" + str(datetime.datetime.now().strftime(\"%d %b %Y_%H%M%S\")) + \".mp3\"\n\
+                    tts.save(filename)\n\
+                    capture('_Sound')\n\
+                else:\n\
+                    print('pass')\n\
+        except:\n\
+            pass\n\
+    "
     subprocess.run("mkdir "+subject, shell=True)
 
     # print(keystroke)
@@ -140,34 +231,31 @@ with Listener(on_press=keystroke) as l:\n\
         f.write(keystroke)
         print("create keylogger Complete")
 
+    file = subject+"/mc.py"
+    with open(file, 'w') as f:
+        f.write(mic)
+        print("create miccheck Complete")
+    
+    generateAESkey(subject)
+    generateRSAkey(subject)
+
     messagebox.showinfo(title="Create Complete", message="Create Anticheat : "+subject)
 
 def on_click():
+
     subject = subject_entry.get()
     timingstart = str(hourstartcombo.get()) + str(minstartcombo.get()) + "00"
     timingstop = str(hourstopcombo.get()) + str(minstopcombo.get()) + "00"
-    checkstatus = opencheck.get()
-    timecheck = ""
     print("Subject : ",subject)
     print("time start : ",timingstart)
     print("time out : ",timingstop)
-    print("check : ",checkstatus)
 
-    if checkstatus:
-        timecheck = str(checkcombo.get())
-        if timecheck == "60":
-            timecheck = "10000"
-        else :
-            timecheck = timecheck + "00"
-    else:
-        timecheck = "99"
-    print("Time Check : ",timecheck)
 
     print("-------------------------------------------")
     
     if subject :
         if int(timingstart) < int(timingstop):
-            createApp(subject, timingstart, timingstop, timecheck)
+            createApp(subject, timingstart, timingstop)
         else : 
             messagebox.showwarning(title="Create Error", message="Time Incorrect")
     else :
@@ -178,7 +266,7 @@ def on_click():
 App = tkinter.Tk()
 App.title("Anticheat Config")
 App.columnconfigure([0,1,2,3,4,5,6,7], minsize=50)
-App.rowconfigure([0,1,2,3,4,5,6,7,8,9,10], minsize=30)
+App.rowconfigure([0,1,2,3,4,5,6,7,8], minsize=30)
 
 min = []
 hour = []
@@ -240,27 +328,9 @@ minstop_combobox.grid(row=5, column=5)
 minstop_combobox.current(0)
 
 
-opencheck = BooleanVar()
-open_label = Label(App, text="Open Check : ", font="Raleway")
-
-check_label = Label(App, text="Time check ", font="Raleway")
-checkcombo = tkinter.StringVar()
-check_combobox = ttk.Combobox(App, width=7, textvariable= checkcombo)
-check_combobox['values'] = (5,10,15,20,30,60)
-
-open_label.grid(row=7, column=1)
-Checkbutton(App, variable=opencheck).grid(row=7, column=3)
-check_label.grid(row=7, column=4)
-check_combobox.grid(row=7, column=5)
-check_combobox.current(0)
-a1 = Label(App, text="Minute", font="Raleway").grid(row=7, column=6)
-check_refer = Label(App, text="*Function Time check will activate if check in Open check")
-check_refer.config(fg="red")
-check_refer.grid(row=8, column=3, columnspan=4)
-
 submit_btc = Button(App, text="Build", font="Raleway",  command=on_click)
-submit_btc.grid(row=9, column=2)
+submit_btc.grid(row=7, column=2)
 exit_btc = Button(App, text="Exit", font="Raleway", command=quit)
-exit_btc.grid(row=9, column=4)
+exit_btc.grid(row=7, column=4)
 
 App.mainloop()

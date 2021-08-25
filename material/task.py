@@ -1,25 +1,25 @@
 import subprocess
-import pyautogui
 import datetime
 
-# capture 
-def capture():
-    x = str(datetime.datetime.now().strftime("%d %b %Y_%H%M00"))
-    x += "_Time"
-    #print(x)
-    pyautogui.screenshot().save('Temp\\Capture\\'+ x +'.jpg')
+def task():
+    subprocess.run("tasklist /fi \"STATUS eq RUNNING\" > running.txt", shell=True)
+
+    with open('running.txt', 'r') as f:
+        x = f.read()
+
+    if (x.find("TeamSpeak") >= 0 ) or (x.find("Skype") >=0 ) or (x.find("Discord") >= 0):
+        print("detect")
+    else:
+        print("pass")
 
 def taskkill():
     subprocess.run('taskkill /IM python.exe /F', shell=True)
-
-# def hide():
-
 
 if ( __name__ == '__main__' ):
     
     while 1:
         x = input("Enter Function : ")
         if x == '1':
-            capture()
+            task()
         else:
             taskkill()

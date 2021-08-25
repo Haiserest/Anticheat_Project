@@ -4,44 +4,72 @@ from tkinter import messagebox
 import datetime
 import pyautogui
 import subprocess
+import wmi
+import os
+from Crypto.Cipher import AES
+from Crypto.PublicKey import RSA
+from Crypto.Random import get_random_bytes
+
+#=====================key==============================
 
 #===================function===========================
 
-def time(s):
-    min = int(datetime.datetime.now().strftime("%M"))
-    if (min %2 == 0) and (s == 0) :
-        capture()
-    return min
+def monitor():
+    obj = wmi.WMI().Win32_PnPEntity(ConfigManagerErrorCode=0)
+
+    displays = [x for x in obj if 'DISPLAY' in str(x)]
+    i = 0
+    for item in displays:
+        #print(item)
+        i +=1
+    i-=1
+
+    if i == 1:
+        display = "single Monitor\n"
+        print(display)      
+    elif i > 1:
+        display = "Multi Monitor : [" + str(i) + "]\n"
+        print(display)  
+    
+    task = "Temp/exe.txt"
+    with open(task, 'a') as f:
+        f.write(display)
 
 # capture 
 def capture():
     x = str(datetime.datetime.now().strftime("%d %b %Y_%H%M%S"))
-    x += "_Time"
     pyautogui.screenshot().save('Temp\\Capture\\'+ x +'.jpg')
 
 def keylogger():
     subprocess.Popen('python material\\Keylogger.py', shell=True)
-
-    # ####### fix mean set time to capture detect
-    # fix = "145700"
-    # print("keylogger")
-    # t = str(datetime.datetime.now().strftime("%H")) + str(datetime.datetime.now().strftime("%M")) +  str(datetime.datetime.now().strftime("%S"))
-    # print(t)
-    # if t >= fix:
-    #     subprocess.Popen('python material\\Keylogger.py', shell=True)
+    subprocess.Popen('python material\\mic.py', shell=True)
 
 def tasklist():
     subprocess.run("tasklist /fi \"STATUS eq RUNNING\" > Temp\\running.txt", shell=True)
 
     with open("Temp/running.txt", 'r') as r:
-        running = r.read()
+        x = r.read()
+        detect = ""
 
-    task = "Temp/exe.txt"
-    with open(task, 'a') as f:
-        tasktime = str(datetime.datetime.now().strftime("Detect Time >> %H : %M : %S\n"))
-        f.write(tasktime)
-        f.write(running)
-        f.close()
+    if (x.find("TeamSpeak") >= 0 ) or (x.find("Skype") >=0 ) or (x.find("Discord") >= 0):
+        if (x.find("TeamSpeak") >= 0 ):
+
+            detect += "TeamSpeaker\n"
+        if (x.find("Skype") >=0 ):
+
+            detect += "Skype\n"
+        if (x.find("Discord") >= 0):
+
+            detect += "Discord\n"
+        else:
+            print("pass")
+
+        task = "Temp/exe.txt"
+        with open(task, 'a') as f:
+            tasktime = str(datetime.datetime.now().strftime("Time >> %H : %M : %S\n"))
+            f.write(tasktime)
+            f.write(detect)
+            f.close()
 
 def endApp():
     tasklist()
@@ -65,27 +93,24 @@ def student():
         def clock():
    
             ####### fix mean set time to capture detect
-            fix = "145900"
-            timeout = "145930"
-            time_check = 10
+            fix = "200200"
+            timeout = "165330"
+
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
-            print(str(minute))
+
             if hour+minute+second == fix:
-                print("detect")
+                print("Start App")
+                monitor()
                 tasklist()
-                capture()
+                #capture()
                 keylogger()
             
-            elif hour+minute+second == timeout:
-                print("timeout")
-                messagebox.showwarning(title="Time Out", message="Time Out")
-                endApp()
-
-
-            if (int(minute) % time_check == 0):
-                print("cap")
+            # elif hour+minute+second == timeout:
+            #     print("timeout")
+            #     messagebox.showwarning(title="Time Out", message="Time Out")
+            #     endApp()
 
 
             timer = hour + ":" + minute + ":" + second
@@ -94,43 +119,17 @@ def student():
 
 
         clock_label = Label(Window, text="", font=("Raleway", 20))
-        clock_label.pack(padx=20, pady=20)
+        clock_label.pack(pady=20)
 
         clock()
         
         btn_end = Button(Window, text="Finish Test", font="Raleway", command=endApp)
-        btn_end.pack(padx=20, pady=10)
+        btn_end.pack(pady=10)
 
         Window.mainloop()
     else:
         messagebox.showwarning(title="warning", message="error valid")
-
-
-#=====================main=============================
-
-# if (__name__ == '__main__'):
-
-#     cmd()
-#     check = int(input("Min to capture check : "))
-#     end = int(input("Min to end : "))
-#     i = 1
-#     spam = 0
-#     while i == 1 :
-#         min = time(spam)
-#         if (min %check == 0) and (spam == 0) :
-#             print(datetime.datetime.now().strftime("%H : %M : %S"))
-#             # print(min)
-#             spam = 1
-#         elif min % end == 0:
-#             print(datetime.datetime.now().strftime("%H : %M : %S"))
-#             print ("End")
-#             i = 0
-#         elif (min %check != 0):
-#             spam = 0
     
-#     endApp()
-
-#=======================UI==============================
 
 #========================== create folder =======================================
 Application = tkinter.Tk()
@@ -148,29 +147,3 @@ btn_submit = Button(Application, text="Submit" , font="Raleway", command=student
 btn_submit.grid(column = 1, row = 2)
 
 Application.mainloop()
-
-#============================ clock =================================================
-
-# if id:
-#     Window = tkinter.Tk()
-#     Window.title("Window")
-#     Window.geometry("300x150")
-
-#     def clock():
-#         hour = str(datetime.datetime.now().strftime("%H"))
-#         minute = str(datetime.datetime.now().strftime("%M"))
-#         second = str(datetime.datetime.now().strftime("%S"))
-
-#         timer = hour + ":" + minute + ":" + second
-#         clock_label.config(text=timer)
-#         clock_label.after(1000, clock)
-
-#     clock_label = Label(Window, text="", font=("Raleway", 20))
-#     clock_label.pack(padx=20, pady=20)
-
-#     clock()
-
-#     btn_endtest = Button(Window, text="Finish Test", font="Raleway", command=Window.quit)
-#     btn_endtest.pack(padx=20, pady=10)
-
-#     Window.mainloop()
