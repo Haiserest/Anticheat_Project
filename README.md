@@ -1,14 +1,45 @@
-# **Anticheat_Project B R U H . . .**
+# **Anticheat_Project**
 
-main Application
+### Project Study "523480 Computer Engineering Project"
+&nbsp;
+> LANGUAGE THIS PROJECT
+  * <img src="https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white">
 
-    - config_App.py 
-    
-* Config_App
-![Config_app](https://user-images.githubusercontent.com/69398619/126809814-b594f900-8bda-47cd-a520-7284b77ecce9.PNG)
+> Anticheat Application for online test     **‼️!!!! This version is Prototype**  
 
-* Anticheat_App
-![AntiApp](https://user-images.githubusercontent.com/69398619/126809863-ff12e9f9-e0df-4890-b680-fcbca8145a40.PNG)
+- FEATURE
+  - [Keylogger](https://pynput.readthedocs.io/en/latest/keyboard.html)
+  - [Screen Capture](https://pyautogui.readthedocs.io/en/latest/quickstart.html#screenshot-functions)
+  - [Packet capture](https://scapy.readthedocs.io/en/latest/introduction.html)
+  - [Encrypt & Decrypt](https://pycryptodome.readthedocs.io/en/latest/src/cipher/cipher.html)
 
-_Idea_
-  Config_App ----> create ----> Anticheat_App
+- UI
+  - [tkinter](https://docs.python.org/3/library/tkinter.html)
+
+
+# **UI**
+> !!!!! This is test ui not real ui but model real like this 
+
+### CONFIG
+
+<div>
+  
+</div>
+
+### DECRYPT
+
+<div>
+  
+</div>
+
+### SIGN ID
+
+<div>
+  
+</div>
+
+### TIME TEST
+
+<div>
+  
+</div>
