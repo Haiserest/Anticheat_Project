@@ -1,6 +1,7 @@
 import psutil as ps
 from prettytable import PrettyTable
 
+
 table = PrettyTable(['PNAME', 'STATUS'])
 for process in ps.pids():
     try:
