@@ -5,7 +5,7 @@
 > LANGUAGE THIS PROJECT
   * <img src="https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white">
 
-> Anticheat Application for online test     **‼️!!!! This version is Prototype**  
+> Anticheat Application for online test     **‼️‼️‼️ This version is Prototype**  
 
 - FEATURE
   - [Keylogger](https://pynput.readthedocs.io/en/latest/keyboard.html)
@@ -18,7 +18,7 @@
 
 
 # **UI**
-> !!!!! This is test ui not real ui but model real like this 
+> ‼️‼️‼️ This is test ui not real ui but model real like this 
 
 ### CONFIG
 
