@@ -1,7 +1,8 @@
 import tkinter
 from tkinter import *
-from tkinter import messagebox
+from tkinter import filedialog,messagebox
 from tkinter import ttk
+from tkinter.font import BOLD
 import subprocess
 import os
 from Crypto.Cipher import AES
@@ -244,8 +245,8 @@ with speech.Microphone() as source:\n\
 def on_click():
 
     subject = subject_entry.get()
-    timingstart = str(hourstartcombo.get()) + str(minstartcombo.get()) + "00"
-    timingstop = str(hourstopcombo.get()) + str(minstopcombo.get()) + "00"
+    timingstart = str(hour_startbox.get()) + str(min_startbox.get()) + "00"
+    timingstop = str(hour_stopbox.get()) + str(min_stopbox.get()) + "00"
     print("Subject : ",subject)
     print("time start : ",timingstart)
     print("time out : ",timingstop)
@@ -261,76 +262,228 @@ def on_click():
     else :
         messagebox.showwarning(title="Create Error", message="Subject Incorrect")
 
+def set_path(entry_field):
+    path = filedialog.askdirectory(initialdir='C:')
+    entry_field.delete(0, tkinter.END)
+    entry_field.insert(0, path)
+
+    with open('dirpath', 'w') as f:
+        f.write(path)
+
+def dirsearch():
+    with open('dirpath', 'r') as f:
+        p = f.read()
+    os.remove('dirpath')
+    file = os.listdir(p)
+    keep = ''
+    count = 1
+    for name in file:
+        # if '1' in name:
+        keep = keep + str(count) + ' : ' + name + '\n'
+        count+=1
+    count = count - 1
+    keep = 'Found : ' + str(count) + '\n' + keep
+
+    if count == 0:
+        messagebox.showinfo(message="Not Found!!!")
+    else:
+        messagebox.showinfo(message=keep)
+
 #========================================= UI =====================================
+
+# App = tkinter.Tk()
+# App.title("Anticheat Config")
+# App.columnconfigure([0,1,2,3,4,5,6,7], minsize=50)
+# App.rowconfigure([0,1,2,3,4,5,6,7,8], minsize=30)
+
+# min = []
+# hour = []
+
+# for i in range(61):
+#     if i < 10:
+#         i = "0" + str(i)
+#         min.append(i)
+#         hour.append(i)
+#     elif i <= 24:
+#         hour.append(i)
+#     if (type(i) == int)and(i >= 10) :
+#         min.append(i)
+
+# subject_label = Label(App, text="Subject : ", font="Raleway")
+# subject_entry = Entry(App, width=30)
+
+# subject_label.grid(row=1, column=1)
+# subject_entry.grid(row=1, column=3, columnspan=2)
+
+
+# start_label = Label(App, text="Start Time ", font="Raleway")
+
+# hourstartcombo = tkinter.StringVar()
+# hourstart_combobox = ttk.Combobox(App, width=7, textvariable = hourstartcombo)
+# hourstart_combobox['values'] = hour
+
+# minstart_label = Label(App, text=" : ", font="Raleway")
+# minstartcombo = tkinter.StringVar()
+# minstart_combobox = ttk.Combobox(App, width=7, textvariable = minstartcombo)
+# minstart_combobox['values'] = min
+
+# start_label.grid(row=3, column=1)
+
+# hourstart_combobox.grid(row=3, column=3)
+# hourstart_combobox.current(0)
+# minstart_label.grid(row=3, column=4)
+# minstart_combobox.grid(row=3, column=5)
+# minstart_combobox.current(0)
+
+
+# stop_label = Label(App, text="Time Out ", font="Raleway")
+
+# hourstopcombo = tkinter.StringVar()
+# hourstop_combobox = ttk.Combobox(App, width=7, textvariable = hourstopcombo)
+# hourstop_combobox['values'] = hour
+
+# minstop_label = Label(App, text=" : ", font="Raleway")
+# minstopcombo = tkinter.StringVar()
+# minstop_combobox = ttk.Combobox(App, width=7, textvariable = minstopcombo)
+# minstop_combobox['values'] = min
+
+# stop_label.grid(row=5, column=1)
+
+# hourstop_combobox.grid(row=5, column=3)
+# hourstop_combobox.current(0)
+# minstop_label.grid(row=5, column=4)
+# minstop_combobox.grid(row=5, column=5)
+# minstop_combobox.current(0)
+
+
+# submit_btc = Button(App, text="Build", font="Raleway",  command=on_click)
+# submit_btc.grid(row=7, column=2)
+# exit_btc = Button(App, text="Exit", font="Raleway", command=quit)
+# exit_btc.grid(row=7, column=4)
+
+# App.mainloop()
+
+def main_frame():
+    global page
+
+    frame_main = Frame(App, height=400, width=100, background='#65728d')
+    frame_main.place(x=0,y=0)
+
+    btn_home = Button(frame_main, text="Home",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_home)
+    btn_home.place(x=10,y=30)
+
+    btn_config = Button(frame_main, text="Config",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_config)
+    btn_config.place(x=10, y=70)
+
+    btn_decreypt = Button(frame_main, text="Decrypt",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_decrypt)
+    btn_decreypt.place(x=10, y=110)
+
+    frame_home()
+
+def frame_home():
+    global framehome
+
+    framehome = Frame(App, height=300, width=300)
+    framehome.place(x=100, y=0)
+
+    label_home = Label(framehome, text='Home Page', font=BOLD)
+    label_home.place(x=100,y=100)
+    
+def frame_config():
+    global framecon,subject_entry,hour_startbox,min_startbox,hour_stopbox,min_stopbox
+
+    framecon = Frame(App, height=300, width=300)
+    framecon.place(x=100, y=0)
+
+    min = []
+    hour = []
+
+    for i in range(61):
+        if i < 10:
+            i = "0" + str(i)
+            min.append(i)
+            hour.append(i)
+        elif i <= 23:
+            hour.append(i)
+        if (type(i) == int)and(i >= 10) :
+            min.append(i)
+
+    subject_label = Label(framecon, text='Subject : ', font=BOLD)
+    subject_label.place(x=20, y=50)
+
+    subject_entry = Entry(framecon, width=25)
+    subject_entry.place(x=100, y=53)
+
+    time_label = Label(framecon, text='Time : ', font=BOLD)
+    time_label.place(x=20, y=90)
+
+    hour_startbox = tkinter.StringVar()
+    hour_start = ttk.Combobox(framecon, width=3, textvariable = hour_startbox)
+    hour_start['values'] = hour
+    hour_start.place(x=70, y=92)
+
+    min_startbox = tkinter.StringVar()
+    min_start = ttk.Combobox(framecon, width=3, textvariable = min_startbox)
+    min_start['values'] = min
+    min_start.place(x=120, y=92)
+
+    label_ = Label(framecon, text='-')
+    label_.place(x=170, y=90)
+
+    hour_stopbox = tkinter.StringVar()
+    hour_stop = ttk.Combobox(framecon, width=3, textvariable = hour_stopbox)
+    hour_stop['values'] = hour
+    hour_stop.place(x=190, y=92)
+
+    min_stopbox = tkinter.StringVar()
+    min_stop = ttk.Combobox(framecon, width=3, textvariable = min_stopbox)
+    min_stop['values'] = min
+    min_stop.place(x=240, y=92)
+    
+    submit_btn = Button(framecon, text="Build", font=BOLD, command=on_click)
+    submit_btn.place(x=150, y=150)
+
+def frame_decrypt():
+    global framedecrypt
+
+    framedecrypt = Frame(App, height=300, width=300)
+    framedecrypt.place(x=100, y=0)
+
+    pathdir_label = Label(framedecrypt, text='dir path :',font=BOLD)
+    pathdir_label.place(x=10, y=40)
+    pathdir_entry = Entry(framedecrypt, width=30)
+    pathdir_entry.place(x=85,y=42)
+    pathdir_btn = Button(framedecrypt, text='...', font=BOLD, bd=1, command=lambda: set_path(pathdir_entry))
+    pathdir_btn.place(x=275, y=35)
+
+    search_btn = Button(framedecrypt, text='search', font=BOLD, bd=1, command=dirsearch)
+    search_btn.place(x=20, y=70)
+
+    label_findsol = Label(framedecrypt, text='==============================', font=BOLD)
+    label_findsol.place(x=10,y=100)
+
+    pathsc_label = Label(framedecrypt, text='file path :',font=BOLD)
+    pathsc_label.place(x=10, y=140)
+    pathsc_entry = Entry(framedecrypt, width=30)
+    pathsc_entry.place(x=85,y=142)
+    pathsc_btn = Button(framedecrypt, text='...', font=BOLD, bd=1)
+    pathsc_btn.place(x=275, y=135)
+
+    pathkey_label = Label(framedecrypt, text='key path :',font=BOLD)
+    pathkey_label.place(x=10, y=180)
+    pathkey_entry = Entry(framedecrypt, width=30)
+    pathkey_entry.place(x=85,y=182)
+    pathkey_btn = Button(framedecrypt, text='...', font=BOLD, bd=1, command=lambda: set_path(pathkey_entry))
+    pathkey_btn.place(x=275, y=175)
+
+    decrypt_btn = Button(framedecrypt, text='Decrypt', font=BOLD, bd=1, command=dirsearch)
+    decrypt_btn.place(x=20, y=220)
 
 App = tkinter.Tk()
 App.title("Anticheat Config")
-App.columnconfigure([0,1,2,3,4,5,6,7], minsize=50)
-App.rowconfigure([0,1,2,3,4,5,6,7,8], minsize=30)
+App.geometry("400x300")
+App.iconbitmap('material/icon2.ico')
 
-min = []
-hour = []
-
-for i in range(61):
-    if i < 10:
-        i = "0" + str(i)
-        min.append(i)
-        hour.append(i)
-    elif i <= 24:
-        hour.append(i)
-    if (type(i) == int)and(i >= 10) :
-        min.append(i)
-
-subject_label = Label(App, text="Subject : ", font="Raleway")
-subject_entry = Entry(App, width=30)
-
-subject_label.grid(row=1, column=1)
-subject_entry.grid(row=1, column=3, columnspan=2)
-
-
-start_label = Label(App, text="Start Time ", font="Raleway")
-
-hourstartcombo = tkinter.StringVar()
-hourstart_combobox = ttk.Combobox(App, width=7, textvariable = hourstartcombo)
-hourstart_combobox['values'] = hour
-
-minstart_label = Label(App, text=" : ", font="Raleway")
-minstartcombo = tkinter.StringVar()
-minstart_combobox = ttk.Combobox(App, width=7, textvariable = minstartcombo)
-minstart_combobox['values'] = min
-
-start_label.grid(row=3, column=1)
-
-hourstart_combobox.grid(row=3, column=3)
-hourstart_combobox.current(0)
-minstart_label.grid(row=3, column=4)
-minstart_combobox.grid(row=3, column=5)
-minstart_combobox.current(0)
-
-
-stop_label = Label(App, text="Time Out ", font="Raleway")
-
-hourstopcombo = tkinter.StringVar()
-hourstop_combobox = ttk.Combobox(App, width=7, textvariable = hourstopcombo)
-hourstop_combobox['values'] = hour
-
-minstop_label = Label(App, text=" : ", font="Raleway")
-minstopcombo = tkinter.StringVar()
-minstop_combobox = ttk.Combobox(App, width=7, textvariable = minstopcombo)
-minstop_combobox['values'] = min
-
-stop_label.grid(row=5, column=1)
-
-hourstop_combobox.grid(row=5, column=3)
-hourstop_combobox.current(0)
-minstop_label.grid(row=5, column=4)
-minstop_combobox.grid(row=5, column=5)
-minstop_combobox.current(0)
-
-
-submit_btc = Button(App, text="Build", font="Raleway",  command=on_click)
-submit_btc.grid(row=7, column=2)
-exit_btc = Button(App, text="Exit", font="Raleway", command=quit)
-exit_btc.grid(row=7, column=4)
+main_frame()
 
 App.mainloop()

