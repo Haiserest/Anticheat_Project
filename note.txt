@@ -1,4 +1,0 @@
-1. process monitor
-2. capture screen 
-3. keylogger
-4. symmetic key

@@ -5,7 +5,7 @@ tasklist /fi "STATUS eq RUNNING" >
 netstat -b 5 > scan.txt
 
 ### kil task manage to stop Keylogger
-taskkill /IM python.exe /F
+taskkill /IM xxxx.exe /F
 
 ### hide folder & file
 attrib [+option] [file]
