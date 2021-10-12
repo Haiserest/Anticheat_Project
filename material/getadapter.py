@@ -58,7 +58,7 @@ for i in range(1,count-1):
                 # print("\n=====================\nactive " + listadapter[i] +"\n=====================\n")
                 wireless_adapter.append(str(listadapter[i].strip()))
                 
-                with open('Name_adapter.txt', 'a') as f:
+                with open('Temp/Name_adapter.txt', 'a') as f:
                     if (found > 0):
                         f.write('\n')
                     f.write(str(listadapter[i].strip()))

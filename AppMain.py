@@ -5,14 +5,51 @@ from tkinter.font import BOLD
 import datetime
 import pyautogui
 import subprocess
+import zipfile
 import wmi
+import os
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5
 from Crypto.Random import get_random_bytes
-
-#=====================key==============================
+from Crypto.Hash import SHA512
 
 #===================function===========================
+
+def listfilezip():
+    file = os.listdir(id)
+    file_list = []
+    keep = ''
+    count = 1
+    for name in file:
+        if '.txt' in name :
+            keep = keep + str(count) + ' : ' + name + '\n'
+            file_list.append(id+'/'+name)
+            count+=1
+        else:
+            dir_list = os.listdir(id+'/'+name)
+            for subfile in dir_list:
+                keep = keep + str(count) + ' : ' + subfile + '\n'
+                file_list.append(id+'/'+name+'/'+subfile)
+                count+=1
+    count = count - 1
+    keep = 'Found : ' + str(count) + '\n' + keep
+    print(file_list)
+    file_compress(file_list)
+    
+
+def file_compress(file_list):
+    compression = zipfile.ZIP_DEFLATED
+    out_zp = id+".zip"
+    zf = zipfile.ZipFile(out_zp, mode="w")
+    try:
+        for files in file_list:
+            print(f'zip : {files}')
+            zf.write(files, files, compress_type=compression)
+    except FileNotFoundError as e:
+        print(f'Exception {e}')
+     
+    zf.close  
 
                                                                     # detect find monitor used
 def monitor():
@@ -28,59 +65,75 @@ def monitor():
     display = "Found Monitor : [" + str(i) + "]\n"
     print(display)  
                                                                     # write monitor used to exe.txt
-    task = 'Temp/exe.txt'
+    task = 'Temp/log_data.txt'
     with open(task, 'a') as f:
         f.write(display+'\n')
-
-                                                                    # screenshot (primary monitor) 
-def capture():
-    x = str(datetime.datetime.now().strftime('%d %b %Y_%H%M%S'))
-    pyautogui.screenshot().save('Temp\\Capture\\'+ x +'.jpg')
 
                                                                     # call function interrupt
 def Call_function():
                                                                     # keyboard interrupt
     subprocess.Popen('python material\\Keylogger.py', shell=True)
-                                                                    # mic interrupt
-    #more interrupt
-    #subprocess.Popen('python material\\mic.py', shell=True)
                                                                     # scapy scan and find adapter wireless
     subprocess.Popen('python material\\getadapter.py', shell=True)
     subprocess.Popen('python material\\networkscan.py', shell=True)
-
                                                                     # process monitor detect keyword 
 def tasklist():
-    subprocess.run('tasklist /fi \"STATUS eq RUNNING\" > Temp\\running.txt', shell=True)
-
-    with open('Temp/running.txt', 'r') as r:
-        x = r.read()
-        detect = ''
-                                                                    # filter keyword application voice chat
-    if (x.find('TeamSpeak') >= 0 ) or (x.find('Skype') >=0 ) or (x.find('Discord') >= 0):
-        if (x.find('TeamSpeak') >= 0 ):
-            detect += 'TeamSpeaker\n'
-        if (x.find('Skype') >=0 ):
-            detect += 'Skype\n'
-        if (x.find('Discord') >= 0):
-            detect += 'Discord\n'
-        else:
-            print("pass")
-                                                                    # get process detected to exe.txt
-        task = 'Temp/exe.txt'
-        with open(task, 'a') as f:
-            tasktime = str(datetime.datetime.now().strftime('Time >> %H : %M : %S\n'))
-            f.write(tasktime)
-            f.write(detect)
-            f.close()
+    subprocess.Popen('python material\\processmonitor.py', shell=True)
 
                                                                     # end Application and rename file keep source
 def endApp():
     tasklist()
-    subprocess.run('del "Temp\\running.txt"', shell=True)
-    subprocess.run('rename Temp ' + id, shell=True)
-    subprocess.run('taskkill /IM python.exe /F', shell=True)
+    ans = messagebox.askyesno(title='Finish test', message='Are You Finish Test?')
+    if ans:
+        messagebox.showinfo(message='test compete!!')
+        subprocess.run('del "Temp\\Name_adapter.txt"', shell=True)
+        subprocess.run('del "Temp\\running.txt"', shell=True)
+        encryptfiletext()
+        subprocess.run('rename Temp ' + id, shell=True)
+        try:
+            listfilezip()
+            subprocess.run('taskkill /IM python.exe /F', shell=True)
+        except:
+            messagebox.showerror(message="error!!!")
+    else:
+        messagebox.showerror(message='Invalid!!')
 
+def encryptfiletext():
+
+    with open('File_Generate/AESKey', 'rb') as f:
+        aeskey = f.read()
     
+    list_text = os.listdir('Temp')
+    for eachfile in list_text:
+        if '.txt' in eachfile:         
+            file = 'Temp/' + eachfile
+            with open(file, 'r') as f:
+                fp = f.read()
+
+            # get AES key to encrypt text
+            cipher = AES.new(aeskey, AES.MODE_EAX)
+            iv = cipher.nonce
+            ciphertext, tag = cipher.encrypt_and_digest(fp.encode('UTF-8'))
+
+            print("iv : ", iv)
+            print("ciphertext : ",ciphertext)
+
+            # len iv = 16 | tag = 16
+            ciphertext = iv + tag + ciphertext
+            print("ciphertext_encrypt : ",ciphertext)
+
+            # convert SHA512 to use public key
+            digest = SHA512.new()
+            digest.update(ciphertext)
+
+            pub = RSA.import_key(open('File_Generate/Public_Key.pem').read())
+            pubkey = PKCS1_v1_5.new(pub)
+            enc = pubkey.encrypt(digest.digest())
+
+            with open(file, 'wb') as f:
+                f.write(enc)
+                f.write(ciphertext) 
+
 def sumbit():
     global id
 
@@ -126,7 +179,7 @@ def frame_clock():
 
         def clock():
 
-            fix = "234600"
+            fix = "164330"
 
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))

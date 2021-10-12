@@ -5,40 +5,135 @@ from tkinter import ttk
 from tkinter.font import BOLD
 import datetime
 import os
+import subprocess
+import zipfile
+import random
+
+global keywords
+keywords = ['DISCORD','SKYPE','TEAMSPEAKER']
+
+def listfilezip():
+    file = os.listdir(id)
+    file_list = []
+    keep = ''
+    count = 1
+    for name in file:
+        keep = keep + str(count) + ' : ' + name + '\n'
+        file_list.append(id+'/'+name)
+        count+=1
+    count = count - 1
+    keep = 'Found : ' + str(count) + '\n' + keep
+    print(file_list)
+    file_compress(file_list)
+    
+
+def file_compress(file_list):
+    compression = zipfile.ZIP_DEFLATED
+    out_zp = id+".zip"
+    zf = zipfile.ZipFile(out_zp, mode="w")
+    try:
+        for files in file_list:
+            print(f'zip : {files}')
+            zf.write(files, files, compress_type=compression)
+    except FileNotFoundError as e:
+        print(f'Exception {e}')
+     
+    zf.close   
+
+def findword(name):
+    name = name_dirpath + '/' + name
+    zip = zipfile.ZipFile(name)
+    ziplist = zip.namelist()
+    for files in ziplist:
+        if 'Packet' in files:
+            print("detect Packet : " + files)
+            return 1
+        elif 'Capture' in files:
+            print("detect Capture : " + files)
+            return 2
+    # print(ziplist)
+    return 0
 
 def set_path(entry_field):
     path = filedialog.askdirectory(initialdir='C:')
     entry_field.delete(0, tkinter.END)
     entry_field.insert(0, path)
 
-    with open('dirpath', 'w') as f:
-        f.write(path)
+    global name_dirpath
+    name_dirpath = path
+    print("directory path : " + name_dirpath)
+
 
 def dirsearch():
-    with open('dirpath', 'r') as f:
-        p = f.read()
-    os.remove('dirpath')
-    file = os.listdir(p)
-    keep = ''
+
+    file = os.listdir(name_dirpath)
+    packet = ''
+    scct = ''
     count = 1
     for name in file:
-        if '1' in name:
-            keep = keep + str(count) + ' : ' + name + '\n'
+        status = findword(name)
+        if status == 1 :
+            packet = packet + 'Detect Packet : ' + name + '\n'
+            count+=1
+        elif status == 2 :
+            scct = scct + 'Detect Capture : ' + name + '\n'
             count+=1
     count = count - 1
-    keep = 'Found : ' + str(count) + '\n' + keep
+    keep = 'Suspect : ' + str(count) + '\n' + packet + scct
 
     if count == 0:
-        messagebox.showinfo(message="Not Found!!!")
+        messagebox.showinfo(message="All Done!!!")
     else:
         messagebox.showinfo(message=keep)
+
+def kk():
+    ck = check.get()
+    key = keyword_entry.get()
+
+    if ck:
+        k = key.split(',')
+        for count in range(len(k)):
+            keywords.append(k[count].upper())
+    else:
+        pass
+    print(keywords)
+
+def pop_up():
+    ans = messagebox.askyesno(title='Finish test', message='Are You Finish Test?')
+    if ans:
+        messagebox.showinfo(message='test compete!!')
+        listfilezip()
+        main_frame()
+    else:
+        pass
+
+def tasklist():
+    subprocess.run('tasklist /fi \"STATUS eq RUNNING\" > running.txt', shell=True)
+    with open('running.txt', 'r') as r:
+        x = r.read().upper()
+    for name in keywords:
+        if name in x:
+            subprocess.run('taskkill /IM '+name+'.exe /F',shell=True)
+        else:
+            pass
+    subprocess.run('del "running.txt"', shell=True)
 
 def sumbit():
     global id
 
     id = id_std.get()
     entry_id.delete(0,END)
+    tasklist()
+    createfolder()
     return frame_clock()
+
+def createfolder():
+    subprocess.run('mkdir '+id, shell=True)
+    file_random = ['log1.txt','log2.txt','Packet.txt','log3.txt']
+    for i in range(1,2):
+        name = id+'/file_'+ random.choice(file_random)
+        with open(name, 'w') as f:
+            f.write(name)
 
 def main_frame():
     global page
@@ -74,7 +169,7 @@ def frame_home():
     
 
 def frame_config():
-    global framecon
+    global framecon,keyword_entry,check
 
     framecon = Frame(Application, height=300, width=300)
     framecon.place(x=100, y=0)
@@ -93,39 +188,48 @@ def frame_config():
             min.append(i)
 
     subject_label = Label(framecon, text='Subject : ', font=BOLD)
-    subject_label.place(x=20, y=50)
+    subject_label.place(x=20, y=30)
 
     subject_entry = Entry(framecon, width=25)
-    subject_entry.place(x=100, y=53)
+    subject_entry.place(x=100, y=33)
 
     time_label = Label(framecon, text='Time : ', font=BOLD)
-    time_label.place(x=20, y=90)
+    time_label.place(x=20, y=70)
 
     hour_startbox = tkinter.StringVar()
     hour_start = ttk.Combobox(framecon, width=3, textvariable = hour_startbox)
     hour_start['values'] = hour
-    hour_start.place(x=70, y=92)
+    hour_start.place(x=70, y=72)
 
     min_startbox = tkinter.StringVar()
     min_start = ttk.Combobox(framecon, width=3, textvariable = min_startbox)
     min_start['values'] = min
-    min_start.place(x=120, y=92)
+    min_start.place(x=120, y=72)
 
     label_ = Label(framecon, text='-')
-    label_.place(x=170, y=90)
+    label_.place(x=170, y=70)
 
     hour_stopbox = tkinter.StringVar()
     hour_stop = ttk.Combobox(framecon, width=3, textvariable = hour_stopbox)
     hour_stop['values'] = hour
-    hour_stop.place(x=190, y=92)
+    hour_stop.place(x=190, y=72)
 
     min_stopbox = tkinter.StringVar()
     min_stop = ttk.Combobox(framecon, width=3, textvariable = min_stopbox)
     min_stop['values'] = min
-    min_stop.place(x=240, y=92)
+    min_stop.place(x=240, y=72)
     
-    submit_btn = Button(framecon, text="Build", font=BOLD)
-    submit_btn.place(x=150, y=150)
+    check_label = Label(framecon, text='Add more Application Ex. Discord,Skype')
+    check_label.place(x=50, y=120)
+    check = BooleanVar()
+    check_box = Checkbutton(framecon, variable=check)
+    check_box.place(x=20, y=120)
+
+    keyword_entry = Entry(framecon, width=40)
+    keyword_entry.place(x=20, y=150)
+
+    submit_btn = Button(framecon, text="Build", font=BOLD, command = kk)
+    submit_btn.place(x=110, y=200)
 
 def frame_decrypt():
     global framedecrypt
@@ -140,7 +244,7 @@ def frame_decrypt():
     pathdir_btn = Button(framedecrypt, text='...', font=BOLD, bd=1, command=lambda: set_path(pathdir_entry))
     pathdir_btn.place(x=275, y=35)
 
-    search_btn = Button(framedecrypt, text='search', font=BOLD, bd=1, command=dirsearch)
+    search_btn = Button(framedecrypt, text='O-O', font=BOLD, bd=1, command=dirsearch)
     search_btn.place(x=20, y=70)
 
     label_findsol = Label(framedecrypt, text='==============================', font=BOLD)
@@ -189,18 +293,18 @@ def frame_clock():
         framename = Frame(frameclock,height=40,width=300,background="#a9c8dd")
         framename.place(x=0,y=0)
 
-        std_label = Label(framename, text="Student ID: "+id , font=BOLD, background="#a9c8dd")
+        std_label = Label(framename, text='Student ID: '+id , font=BOLD, background="#a9c8dd")
         std_label.place(x=10,y=10)
 
     except:
-        pass
+        messagebox.showerror(title='error', message='Something Wrong!!')
 
     def clock():
-        hour = str(datetime.datetime.now().strftime("%H"))
-        minute = str(datetime.datetime.now().strftime("%M"))
-        second = str(datetime.datetime.now().strftime("%S"))
+        hour = str(datetime.datetime.now().strftime('%H'))
+        minute = str(datetime.datetime.now().strftime('%M'))
+        second = str(datetime.datetime.now().strftime('%S'))
 
-        timer = hour + ":" + minute + ":" + second
+        timer = hour + ':' + minute + ':' + second
         clock_label.config(text=timer)
         clock_label.after(1000, clock)
 
@@ -209,7 +313,7 @@ def frame_clock():
 
     clock()
 
-    btn_back = Button(frameclock, text="Finish", command=frame_id)
+    btn_back = Button(frameclock, text="Finish", command=pop_up)
     btn_back.place(x=120, y=100)
 
 
@@ -221,3 +325,4 @@ Application.iconbitmap('material/icon2.ico')
 main_frame()
 
 Application.mainloop()
+
