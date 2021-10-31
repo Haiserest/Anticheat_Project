@@ -37,7 +37,6 @@ def listfilezip():
     print(file_list)
     file_compress(file_list)
     
-
 def file_compress(file_list):
     compression = zipfile.ZIP_DEFLATED
     out_zp = id+".zip"
@@ -50,7 +49,6 @@ def file_compress(file_list):
         print(f'Exception {e}')
      
     zf.close  
-
                                                                     # detect find monitor used
 def monitor():
     obj = wmi.WMI().Win32_PnPEntity(ConfigManagerErrorCode=0)
@@ -100,7 +98,7 @@ def endApp():
 
 def encryptfiletext():
 
-    with open('File_Generate/AESKey', 'rb') as f:
+    with open('material/AESKey', 'rb') as f:
         aeskey = f.read()
     
     list_text = os.listdir('Temp')
@@ -126,7 +124,7 @@ def encryptfiletext():
             digest = SHA512.new()
             digest.update(ciphertext)
 
-            pub = RSA.import_key(open('File_Generate/Public_Key.pem').read())
+            pub = RSA.import_key(open('material/Public_Key.pem').read())
             pubkey = PKCS1_v1_5.new(pub)
             enc = pubkey.encrypt(digest.digest())
 
@@ -142,7 +140,7 @@ def sumbit():
     return frame_clock()
 
 def frame_id():
-    global id_std,frametest,entry_id
+    global id_std, frametest, entry_id
 
     frametest = Frame(Application, height=150, width=300)
     frametest.place(x=0, y=0)
@@ -179,7 +177,7 @@ def frame_clock():
 
         def clock():
 
-            test_start = "141500"
+            test_start = TIMER_START
 
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
