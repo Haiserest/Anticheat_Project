@@ -133,8 +133,9 @@ def encryptfiletext():
                 f.write(ciphertext) 
 
 def sumbit():
-    global id
+    global id,start
 
+    start = 0
     id = id_std.get()
     entry_id.delete(0,END)
     return frame_clock()
@@ -176,14 +177,16 @@ def frame_clock():
             pass
 
         def clock():
-
+            
             test_start = TIMER_START
 
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
 
-            if hour+minute+second == test_start:
+            if (hour+minute+second >= test_start) and (start == 0):
+                global start
+                start = 1
                 monitor()
                 tasklist()
                 Call_function()

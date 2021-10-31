@@ -17,10 +17,12 @@ from Crypto.Hash import SHA512
 #===================function===========================
 
 def listfilezip():
+                                                                    # list files in directory in file var.
     file = os.listdir(id)
     file_list = []
     keep = ''
     count = 1
+                                                                    # loop file to find if name '.txt'
     for name in file:
         if '.txt' in name :
             keep = keep + str(count) + ' : ' + name + '\n'
@@ -37,7 +39,7 @@ def listfilezip():
     print(file_list)
     file_compress(file_list)
     
-
+                                                                    # compress list files to .zip
 def file_compress(file_list):
     compression = zipfile.ZIP_DEFLATED
     out_zp = id+".zip"
@@ -135,8 +137,8 @@ def encryptfiletext():
                 f.write(ciphertext) 
 
 def sumbit():
-    global id
-
+    global id, start
+    start = 0
     id = id_std.get()
     entry_id.delete(0,END)
     return frame_clock()
@@ -178,14 +180,16 @@ def frame_clock():
             pass
 
         def clock():
-
+            
             test_start = "141500"
 
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
 
-            if hour+minute+second == test_start:
+            if (hour+minute+second >= test_start) and (start == 0):
+                global start
+                start = 1
                 monitor()
                 tasklist()
                 Call_function()

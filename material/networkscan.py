@@ -59,12 +59,12 @@ def encryptfile(file):
     iv = cipher.nonce
     ciphertext, tag = cipher.encrypt_and_digest(fp.encode('UTF-8'))
 
-    print("iv : ", iv)
-    print("ciphertext : ",ciphertext)
+    # print("iv : ", iv)
+    # print("ciphertext : ",ciphertext)
 
     # len iv = 16 | tag = 16
     ciphertext = iv + tag + ciphertext
-    print("ciphertext_encrypt : ",ciphertext)
+    # print("ciphertext_encrypt : ",ciphertext)
 
             # convert SHA512 to use public key
     digest = SHA512.new()

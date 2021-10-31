@@ -20,7 +20,7 @@ s : set
 
 python create 
 >>pip install pyinstaller
-    pyinstaller --onefile xxxxxx.py
+    pyinstaller --onefile --noconsole xxxxxx.py
 
 icon 
-    pyinstaller --onefile -w -i xxxxx.icon xxxxx.py
+    pyinstaller --onefile -w -i xxxxx.ico xxxxx.py
