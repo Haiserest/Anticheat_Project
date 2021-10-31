@@ -22,8 +22,7 @@ def parse_packet(packet):
         # udp.show()
         udp = packet.firstlayer()
         # udp.show()
-        clock = str(datetime.datetime.now().strftime("Packet_%H%M%S"))
-        file_packet = 'Temp/Packet/' + clock + ".txt"
+        file_packet = 'Temp/Packet/' + str(datetime.datetime.now().strftime("Packet_%H%M%S")) + ".txt"
         udp_packet = udp.show(dump = True)
         pac = str(udp_packet)
         for i in ck:
@@ -31,9 +30,7 @@ def parse_packet(packet):
                 os.makedirs('Temp/Packet', exist_ok=True)
                 with open (file_packet, 'w') as f:
                     f.write(pac)
-                with open ("Temp/log_data.txt", 'a') as f:
-                    f.write("\n" + clock + "  " + i)
-                # encryptfile(file_packet)
+                encryptfile(file_packet)
         
 def udp_sniffer(adapter):
     """
@@ -48,7 +45,7 @@ def udp_sniffer(adapter):
 
 def encryptfile(file):
     
-    with open('File_Generate/AESKey', 'rb') as f:
+    with open('material/AESKey', 'rb') as f:
         aeskey = f.read()
 
     with open(file, 'r') as f:
@@ -59,18 +56,18 @@ def encryptfile(file):
     iv = cipher.nonce
     ciphertext, tag = cipher.encrypt_and_digest(fp.encode('UTF-8'))
 
-    print("iv : ", iv)
-    print("ciphertext : ",ciphertext)
+    # print("iv : ", iv)
+    # print("ciphertext : ",ciphertext)
 
     # len iv = 16 | tag = 16
     ciphertext = iv + tag + ciphertext
-    print("ciphertext_encrypt : ",ciphertext)
+    # print("ciphertext_encrypt : ",ciphertext)
 
             # convert SHA512 to use public key
     digest = SHA512.new()
     digest.update(ciphertext)
 
-    pub = RSA.import_key(open('File_Generate/Public_Key.pem').read())
+    pub = RSA.import_key(open('material/Public_Key.pem').read())
     pubkey = PKCS1_v1_5.new(pub)
     enc = pubkey.encrypt(digest.digest())
 
