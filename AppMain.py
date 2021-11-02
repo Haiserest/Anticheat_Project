@@ -180,19 +180,23 @@ def frame_clock():
             pass
 
         def clock():
-            
+            global start
             test_start = "141500"
-
+            test_stop = ""
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
 
             if (hour+minute+second >= test_start) and (start == 0):
-                global start
+                
                 start = 1
                 monitor()
                 tasklist()
                 Call_function()
+            
+            elif (hour+minute+second >= test_stop):
+                messagebox.showinfo(message="Time Out")
+                endApp()
 
             timer = hour + ":" + minute + ":" + second
             clock_label.config(text=timer)

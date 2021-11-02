@@ -87,8 +87,10 @@ def createApp(subject, time_start, time_stop):
     with open('material/file_process', 'r') as f:
         process_app = f.read()
         
-    time = '"' + str(time_start) + '"'
-    main_app = main_app.replace("TIMER_START", time)
+    time1 = '"' + str(time_start) + '"'
+    time2 = '"' + str(time_stop) + '"'
+    main_app = main_app.replace("TIMER_START", time1)
+    main_app = main_app.replace("TIMER_STOP", time2)
 
     generateAESkey(subject)
     generateRSAkey(subject)
@@ -143,22 +145,36 @@ def more_APP():
 def on_click():
 
     subject = subject_entry.get()
-    timingstart = str(hour_startbox.get()) + str(min_startbox.get()) + "00"
-    timingstop = str(hour_stopbox.get()) + str(min_stopbox.get()) + "00"
-    print("Subject : ",subject)
-    print("time start : ",timingstart)
-    print("time out : ",timingstop)
-    more_APP()
+    time_list = [str(hour_startbox.get()), str(min_startbox.get()), str(hour_stopbox.get()), str(min_stopbox.get())]
+    err = 0
+    i = 0
+    while i != len(time_list):
+        if (len(time_list[i]) == 0):
+            time_list[i] = "00"
+        elif (len(time_list[i]) == 1):
+            time_list[i] = "0" + time_list[i]
+        elif (len(time_list[i]) > 2):
+            err = 1
+        i+=1
+    if err:
+        messagebox.showerror(title="Invalid", message="Time Invalid!!")
+    else:
+        timingstart = str(hour_startbox.get()) + str(min_startbox.get()) + "00"
+        timingstop = str(hour_stopbox.get()) + str(min_stopbox.get()) + "00"
+        print("Subject : ",subject)
+        print("time start : ",timingstart)
+        print("time out : ",timingstop)
+        more_APP()
 
-    print("-------------------------------------------")
+        print("-------------------------------------------")
     
-    if subject :
-        if int(timingstart) < int(timingstop):
-            createApp(subject, timingstart, timingstop)
-        else : 
-            messagebox.showwarning(title="Create Error", message="Time Incorrect")
-    else :
-        messagebox.showwarning(title="Create Error", message="Subject Incorrect")
+        if subject :
+            if int(timingstart) < int(timingstop):
+                createApp(subject, timingstart, timingstop)
+            else : 
+                messagebox.showwarning(title="Create Error", message="Time Incorrect")
+        else :
+            messagebox.showwarning(title="Create Error", message="Subject Incorrect")
 
 def set_path(entry_field, pathinput):
 

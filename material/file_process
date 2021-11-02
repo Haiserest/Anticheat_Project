@@ -25,7 +25,7 @@ def tasklist():
         if x.find(name) >= 0:
             detect += name + '\n'
                                                                     # get process detected to exe.txt            
-            task = 'Temp/exe.txt'
+            task = 'Temp/log_data.txt'
             with open(task, 'a') as f:
                 tasktime = str(datetime.datetime.now().strftime('Time >> %H : %M : %S\n'))
                 f.write(tasktime)
