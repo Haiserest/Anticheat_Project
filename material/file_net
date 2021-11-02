@@ -22,6 +22,7 @@ def parse_packet(packet):
         # udp.show()
         udp = packet.firstlayer()
         # udp.show()
+        tasktime = str(datetime.datetime.now().strftime('\n%H:%M:%S>> '))
         file_packet = 'Temp/Packet/' + str(datetime.datetime.now().strftime("Packet_%H%M%S")) + ".txt"
         udp_packet = udp.show(dump = True)
         pac = str(udp_packet)
@@ -31,6 +32,9 @@ def parse_packet(packet):
                 with open (file_packet, 'w') as f:
                     f.write(pac)
                 encryptfile(file_packet)
+                task = 'Temp/log_data.txt'
+                with open(task, 'a') as f:
+                    f.write(tasktime + i)
         
 def udp_sniffer(adapter):
     """
