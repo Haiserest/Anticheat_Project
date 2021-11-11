@@ -1,4 +1,4 @@
-*### Library 
+###Library 
 
  * pyinstaller==4.2
  * pycryptodome==3.10.1
