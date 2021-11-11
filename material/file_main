@@ -2,16 +2,17 @@ import tkinter
 from tkinter import *
 from tkinter import messagebox
 from tkinter.font import BOLD
-import datetime
-import pyautogui
-import subprocess
-import zipfile
-import wmi
+
 import os
+import time
+import datetime
+import subprocess
+import wmi
+import zipfile
+
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
-from Crypto.Random import get_random_bytes
 from Crypto.Hash import SHA512
 
 #===================function===========================
@@ -90,7 +91,12 @@ def endApp():
         subprocess.run('rename Temp ' + id, shell=True)
         try:
             listfilezip()
+            
             subprocess.run('taskkill /IM python.exe /F', shell=True)
+            time.sleep(1)
+            subprocess.Popen('python client.py', shell=True)
+            time.sleep(5)
+            subprocess.run('taskkill /IM Application.exe /F', shell=True)
         except:
             messagebox.showerror(message="error!!!")
     else:
@@ -178,8 +184,8 @@ def frame_clock():
 
         def clock():
             global start
-            test_start = TIMER_START
-            test_stop = TIMER_STOP
+            test_start = "TIMER_START"
+            test_stop = "TIMER_STOP"
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))

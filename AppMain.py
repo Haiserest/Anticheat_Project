@@ -90,7 +90,7 @@ def endApp():
         messagebox.showinfo(message='test compete!!')
         subprocess.run('del "Temp\\Name_adapter.txt"', shell=True)
         subprocess.run('del "Temp\\running.txt"', shell=True)
-        encryptfiletext()
+        # encryptfiletext()
         subprocess.run('rename Temp ' + id, shell=True)
         try:
             listfilezip()
@@ -181,8 +181,8 @@ def frame_clock():
 
         def clock():
             global start
-            test_start = "141500"
-            test_stop = ""
+            test_start = "005400"
+            test_stop = "005430"
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
