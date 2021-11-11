@@ -10,7 +10,7 @@ def tasklist():
         x = r.read().upper()
     for name in keyword_app:
         if name in x:
-            print(name)
+            # print(name)
             subprocess.run('taskkill /IM '+name+'.exe /F',shell=True)
         else:
             pass
@@ -32,6 +32,7 @@ def tasklist():
                 f.write(detect)
                 f.close()
         else:
-            print("pass")
+            # print("pass")
+            pass
 
 tasklist()
