@@ -2,7 +2,7 @@ import subprocess
 import datetime
 
 global keyword_app
-keyword_app = ['DISCORD', 'SKYPE', 'TEAMSPEAKER']
+keyword_app = ['DISCORD', 'SKYPEAPP', 'SKYPE', 'TEAMSPEAKER']
 
 def tasklist():
     subprocess.run('tasklist /fi \"STATUS eq RUNNING\" > Temp\\running.txt', shell=True)
