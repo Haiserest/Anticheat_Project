@@ -461,10 +461,10 @@ def main_frame():
     btn_home = Button(frame_main, text="Home",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_home)
     btn_home.place(x=10,y=30)
 
-    btn_config = Button(frame_main, text="Config",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_config)
+    btn_config = Button(frame_main, text="Create",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_config)
     btn_config.place(x=10, y=70)
 
-    btn_decreypt = Button(frame_main, text="Decrypt",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_decrypt)
+    btn_decreypt = Button(frame_main, text="Option",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_decrypt)
     btn_decreypt.place(x=10, y=110)
 
     frame_home()
