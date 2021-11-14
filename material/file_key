@@ -160,7 +160,7 @@ def encrypt(file):
 
     # print("picture : ",picture)
 
-    aes_key = 'material/AESkey'
+    aes_key = 'material/AESkey.pem'
     with open(aes_key, 'rb') as f:
         k = f.read()
     

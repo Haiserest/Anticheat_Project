@@ -49,7 +49,7 @@ def udp_sniffer(adapter):
 
 def encryptfile(file):
     
-    with open('material/AESKey', 'rb') as f:
+    with open('material/AESKey.pem', 'rb') as f:
         aeskey = f.read()
 
     with open(file, 'r') as f:

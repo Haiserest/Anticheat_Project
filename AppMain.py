@@ -3,7 +3,6 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter.font import BOLD
 import datetime
-import pyautogui
 import subprocess
 import zipfile
 import wmi
