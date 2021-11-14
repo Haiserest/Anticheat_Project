@@ -2,26 +2,26 @@ import tkinter
 from tkinter import *
 from tkinter import messagebox
 from tkinter.font import BOLD
+
+import os
+import time
 import datetime
 import subprocess
-import zipfile
 import wmi
-import os
+import zipfile
+
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
-from Crypto.Random import get_random_bytes
 from Crypto.Hash import SHA512
 
 #===================function===========================
 
 def listfilezip():
-                                                                    # list files in directory in file var.
     file = os.listdir(id)
     file_list = []
     keep = ''
     count = 1
-                                                                    # loop file to find if name '.txt'
     for name in file:
         if '.txt' in name :
             keep = keep + str(count) + ' : ' + name + '\n'
@@ -38,7 +38,6 @@ def listfilezip():
     print(file_list)
     file_compress(file_list)
     
-                                                                    # compress list files to .zip
 def file_compress(file_list):
     compression = zipfile.ZIP_DEFLATED
     out_zp = id+".zip"
@@ -51,7 +50,6 @@ def file_compress(file_list):
         print(f'Exception {e}')
      
     zf.close  
-
                                                                     # detect find monitor used
 def monitor():
     obj = wmi.WMI().Win32_PnPEntity(ConfigManagerErrorCode=0)
@@ -64,7 +62,7 @@ def monitor():
     i-=1
 
     display = "Found Monitor : [" + str(i) + "]\n"
-    print(display)  
+    # print(display)  
                                                                     # write monitor used to exe.txt
     task = 'Temp/log_data.txt'
     with open(task, 'a') as f:
@@ -89,11 +87,16 @@ def endApp():
         messagebox.showinfo(message='test compete!!')
         subprocess.run('del "Temp\\Name_adapter.txt"', shell=True)
         subprocess.run('del "Temp\\running.txt"', shell=True)
-        # encryptfiletext()
+        encryptfiletext()
         subprocess.run('rename Temp ' + id, shell=True)
         try:
             listfilezip()
+            
             subprocess.run('taskkill /IM python.exe /F', shell=True)
+            time.sleep(1)
+            subprocess.Popen('python client.py', shell=True)
+            time.sleep(5)
+            subprocess.run('taskkill /IM Application.exe /F', shell=True)
         except:
             messagebox.showerror(message="error!!!")
     else:
@@ -101,7 +104,7 @@ def endApp():
 
 def encryptfiletext():
 
-    with open('File_Generate/AESKey', 'rb') as f:
+    with open('material/AESKey.pem', 'rb') as f:
         aeskey = f.read()
     
     list_text = os.listdir('Temp')
@@ -116,18 +119,18 @@ def encryptfiletext():
             iv = cipher.nonce
             ciphertext, tag = cipher.encrypt_and_digest(fp.encode('UTF-8'))
 
-            print("iv : ", iv)
-            print("ciphertext : ",ciphertext)
+            # print("iv : ", iv)
+            # print("ciphertext : ",ciphertext)
 
             # len iv = 16 | tag = 16
             ciphertext = iv + tag + ciphertext
-            print("ciphertext_encrypt : ",ciphertext)
+            # print("ciphertext_encrypt : ",ciphertext)
 
             # convert SHA512 to use public key
             digest = SHA512.new()
             digest.update(ciphertext)
 
-            pub = RSA.import_key(open('File_Generate/Public_Key.pem').read())
+            pub = RSA.import_key(open('material/Public_Key.pem').read())
             pubkey = PKCS1_v1_5.new(pub)
             enc = pubkey.encrypt(digest.digest())
 
@@ -136,14 +139,15 @@ def encryptfiletext():
                 f.write(ciphertext) 
 
 def sumbit():
-    global id, start
+    global id,start
+
     start = 0
     id = id_std.get()
     entry_id.delete(0,END)
     return frame_clock()
 
 def frame_id():
-    global id_std,frametest,entry_id
+    global id_std, frametest, entry_id
 
     frametest = Frame(Application, height=150, width=300)
     frametest.place(x=0, y=0)
@@ -180,8 +184,8 @@ def frame_clock():
 
         def clock():
             global start
-            test_start = "005400"
-            test_stop = "005430"
+            test_start = "160000"
+            test_stop = "170000"
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))

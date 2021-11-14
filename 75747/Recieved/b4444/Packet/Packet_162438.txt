@@ -1,0 +1,47 @@
+###[ Ethernet ]### 
+  dst       = cc:2d:e0:3a:52:d8
+  src       = 30:e3:7a:29:42:f3
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = 5
+     tos       = 0x0
+     len       = 60
+     id        = 65093
+     flags     = 
+     frag      = 0
+     ttl       = 128
+     proto     = udp
+     chksum    = 0x1c93
+     src       = 10.0.5.201
+     dst       = 8.8.8.8
+     \options   \
+###[ UDP ]### 
+        sport     = 57691
+        dport     = domain
+        len       = 40
+        chksum    = 0xa0b4
+###[ DNS ]### 
+           id        = 26440
+           qr        = 0
+           opcode    = QUERY
+           aa        = 0
+           tc        = 0
+           rd        = 1
+           ra        = 0
+           z         = 0
+           ad        = 0
+           cd        = 0
+           rcode     = ok
+           qdcount   = 1
+           ancount   = 0
+           nscount   = 0
+           arcount   = 0
+           \qd        \
+            |###[ DNS Question Record ]### 
+            |  qname     = 'pipe.skype.com.'
+            |  qtype     = A
+            |  qclass    = IN
+           an        = None
+           ns        = None
+           ar        = None

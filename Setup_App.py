@@ -30,7 +30,7 @@ def generateAESkey(subject):
     key = get_random_bytes(32)
 
     # save Create AES key
-    fileAES = subject+"/File_Generate/AESkey"
+    fileAES = subject+"/File_Generate/AESkey.pem"
     os.makedirs(os.path.dirname(fileAES), exist_ok=True)
     with open(fileAES, 'wb') as f:
         f.write(key)
@@ -38,7 +38,7 @@ def generateAESkey(subject):
 
     # save key for std
 
-    fileAES = subject + '/' + subject + "/material/AESkey"
+    fileAES = subject + '/' + subject + "/material/AESkey.pem"
     os.makedirs(os.path.dirname(fileAES), exist_ok=True)
     with open(fileAES, 'wb') as f:
         f.write(key)
@@ -115,9 +115,9 @@ def createApp(subject, time_start, time_stop):
     generateAESkey(subject)
     generateRSAkey(subject)
 
-    file = subject+"/Server/"
+    file = subject+"/Recieved/"
     os.makedirs(os.path.dirname(file))
-    file = file + "server.py"
+    file = file + "Recieved.py"
     with open(file, 'w') as f:
         f.write(server)
         print("create Receiver..")
@@ -173,7 +173,9 @@ def createApp(subject, time_start, time_stop):
     print("Commplete!!")
     print("=================================================")
     messagebox.showinfo(title="Create Complete", message="Create : "+subject)
-    quit()
+
+    # quit()
+
 def more_APP():
 
     global keywords
@@ -323,7 +325,7 @@ def decrypt(fileextract):
     print("====================================================\n")
     print("\nDecrypt text\n")
 
-    with open(key_path + '/AESkey', 'rb') as f:
+    with open(key_path + '/AESkey.pem', 'rb') as f:
         aes_k = f.read()
 
     with open(key_path + '/Private_Key.pem', 'rb') as f:
@@ -355,7 +357,7 @@ def decrypt(fileextract):
 
 def text_decrypt(file):
 
-    with open(key_path+'/AESKey', 'rb') as f:
+    with open(key_path+'/AESKey.pem', 'rb') as f:
         aeskey = f.read()
         
     with open(file, 'rb') as f:
@@ -394,7 +396,7 @@ def text_decrypt(file):
 
 def file_decrypt(files):
 
-    with open(key_path+'/AESKey', 'rb') as f:
+    with open(key_path+'/AESKey.pem', 'rb') as f:
         aeskey = f.read()
     
     list_text = os.listdir(files)
@@ -409,7 +411,7 @@ def file_decrypt(files):
 def picture_decrypt(filedir_):
 
     print("decrypt\n")
-    aes_key = key_path + '/AESkey'
+    aes_key = key_path + '/AESkey.pem'
     with open(aes_key, 'rb') as f:
         k = f.read()
 

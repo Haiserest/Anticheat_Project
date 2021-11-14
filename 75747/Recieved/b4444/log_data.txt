@@ -1,0 +1,17 @@
+Found Monitor : [1]
+
+hello
+16:24:13>> Key.cmd Key.space
+ข้อนี้ตอบอะไร
+16:24:22>> Key.cmd Key.space
+
+16:24:24>> _search
+16:24:29>> _Copy
+16:24:37>> skype
+16:24:37>> skype
+16:24:37>> skype
+16:24:37>> skype
+16:24:38>> skype
+16:24:38>> skype
+16:24:39>> skype
+16:24:39>> skype
