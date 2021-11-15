@@ -3,7 +3,6 @@ import os
 
 host = "HOST_IP_SERVER"
 port = 8080
-quese = 0
 DISCONNECT = "DISCONNECT"
 
 s= socket.socket()

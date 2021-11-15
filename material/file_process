@@ -2,19 +2,18 @@ import subprocess
 import datetime
 
 global keyword_app
-keyword_app = ['DISCORD', 'SKYPEAPP', 'SKYPE', 'TEAMSPEAKER']
+keyword_app = ["application_outside"]
 
 def tasklist():
-    subprocess.run('tasklist /fi \"STATUS eq RUNNING\" > Temp\\running.txt', shell=True)
-    with open('Temp/running.txt', 'r') as r:
-        x = r.read().upper()
-    for name in keyword_app:
-        if name in x:
-            # print(name)
-            subprocess.run('taskkill /IM '+name+'.exe /F',shell=True)
-        else:
-            pass
-
+    # subprocess.run('tasklist /fi \"STATUS eq RUNNING\" > Temp\\running.txt', shell=True)
+    # with open('Temp/running.txt', 'r') as r:
+    #     x = r.read().upper()
+    # for name in keyword_app:
+    #     if name in x:
+    #         # print(name)
+    #         subprocess.run('taskkill /IM '+name+'.exe /F',shell=True)
+    #     else:
+    #         pass
     subprocess.run('tasklist /fi \"STATUS eq RUNNING\" > Temp\\running.txt', shell=True)
 
     with open('Temp/running.txt', 'r') as r:
@@ -27,7 +26,7 @@ def tasklist():
                                                                     # get process detected to exe.txt            
             task = 'Temp/log_data.txt'
             with open(task, 'a') as f:
-                tasktime = str(datetime.datetime.now().strftime('Time >> %H : %M : %S\n'))
+                tasktime = str(datetime.datetime.now().strftime('\nTime %H:%M:%S '))
                 f.write(tasktime)
                 f.write(detect)
                 f.close()

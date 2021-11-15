@@ -8,6 +8,7 @@ import socket
 import os
 import zipfile
 import shutil
+import datetime
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
@@ -30,7 +31,7 @@ def generateAESkey(subject):
     key = get_random_bytes(32)
 
     # save Create AES key
-    fileAES = subject+"/File_Generate/AESkey.pem"
+    fileAES = subject+"/KEY/AESkey.pem"
     os.makedirs(os.path.dirname(fileAES), exist_ok=True)
     with open(fileAES, 'wb') as f:
         f.write(key)
@@ -53,13 +54,13 @@ def generateRSAkey(subject):
 
     # save key Create
 
-    Private_key_file = subject+"/File_Generate/Private_Key.pem"
+    Private_key_file = subject+"/KEY/Private_Key.pem"
     os.makedirs(os.path.dirname(Private_key_file), exist_ok=True)
     with open(Private_key_file, 'wb') as f:
         f.write(Private_Key)
         f.close()
 
-    Public_key_file = subject+"/File_Generate/Public_Key.pem"
+    Public_key_file = subject+"/KEY/Public_Key.pem"
     os.makedirs(os.path.dirname(Public_key_file), exist_ok=True)
     with open(Public_key_file, 'wb') as f:
         f.write(Public_Key)
@@ -75,7 +76,7 @@ def generateRSAkey(subject):
 
 #====================================== function ==================================
 
-def createApp(subject, time_start, time_stop):
+def createApp(subject, time_start, time_stop, keyword, daytime):
     
     subprocess.run("mkdir "+subject, shell=True)
 
@@ -107,7 +108,19 @@ def createApp(subject, time_start, time_stop):
     time2 =str(time_stop)
     main_app = main_app.replace("TIMER_START", time1)
     main_app = main_app.replace("TIMER_STOP", time2)
+    main_app = main_app.replace("DAYTIME", daytime)
+    app_exe = ''
+    for k in range(len(keyword)):
+        app_exe = f"{app_exe}'{keyword[k]}'"
+        if k+1 != len(keyword):
+            app_exe = app_exe+','        
+    main_app = main_app.replace('"application_outside"', app_exe)
+    process_app = process_app.replace('"application_outside"', app_exe)
 
+    app_exe = app_exe.lower()
+    
+    net_app = net_app.replace('"application_outside"', app_exe)
+    
     host = ipv4_host()
     client = client.replace("HOST_IP_SERVER", host)
     server = server.replace("HOST_IP_SERVER", host)
@@ -179,7 +192,7 @@ def createApp(subject, time_start, time_stop):
 def more_APP():
 
     global keywords
-    keywords = ['DISCORD','SKYPE','TEAMSPEAKER']
+    keywords = ['DISCORD','SKYPE', 'SKYPEAPP','TEAMSPEAKER']
 
     ck = check.get()
     key = keyword_entry.get()
@@ -190,16 +203,57 @@ def more_APP():
             keywords.append(k[count].upper())
     else:
         pass
-    print(keywords)
+    return keywords
 
 def on_click():
 
     subject = subject_entry.get()
     subject = subject.replace(' ','_')
     # print(subject)
+    
+    day_list = [str(day_box.get()), str(month_box.get()), str(year_box.get())]
     time_list = [str(hour_startbox.get()), str(min_startbox.get()), str(hour_stopbox.get()), str(min_stopbox.get())]
     err = 0
     i = 0
+    m = 0
+    month_now = str(datetime.datetime.now().strftime("%B"))
+    day_now = str(datetime.datetime.now().strftime("%d"))
+    zero = [4, 6, 9, 11]
+
+    for i in range(len(month)):
+        if month[i] == day_list[1]:
+            m = i+1
+        if month[i] == str(month_now):
+            month_now = i+1
+    if int(year_now) == int(day_list[2]):
+        if int(m) < int(month_now):
+            err = 1
+        elif int(m) == int(month_now):
+            if int(day_list[0]) < int(day_now):
+                err = 1
+    if int(day_list[0]) < 0:
+        err = 1
+    if int(day_list[0]) > 32:
+        err = 1
+    if int(day_list[2]) < int(year_now):
+        err = 1
+    else:
+        if m in zero:
+            if int(day_list[0]) == 31:
+                err = 1
+        elif m == 2:
+            if int(day_list[0]) > 30:
+                err = 1
+            else:
+                y_n = int(year_now)%4
+                if (y_n != 0) and (int(day_list[0]) == 29):
+                    err = 1
+    if err == 1:
+        messagebox.showerror(title="Invalid", message="Date Invalid!!")
+
+    i = 0
+    err = 0
+
     while i != len(time_list):
         if (len(time_list[i]) == 0):
             time_list[i] = "00"
@@ -207,22 +261,33 @@ def on_click():
             time_list[i] = "0" + time_list[i]
         elif (len(time_list[i]) > 2):
             err = 1
+        if int(time_list[i]) < 0:
+            err = 1
+        if i%2 == 0:
+            if int(time_list[i]) > 23:
+                err = 1
+        elif i%2 == 1:
+            if int(time_list[i]) > 59:
+                err = 1
         i+=1
     if err:
         messagebox.showerror(title="Invalid", message="Time Invalid!!")
     else:
         timingstart = str(time_list[0]) + str(time_list[1]) + "00"
         timingstop = str(time_list[2]) + str(time_list[3]) + "00"
-        print("Subject : ",subject)
-        print("time start : ",timingstart)
-        print("time out : ",timingstop)
-        more_APP()
+        daytime = f"{day_list[0]} {day_list[1]} {day_list[2]}"
+        print(f"Subject : {subject}")
+        print(f"Date : {daytime}")
+        print(f"time start : {time_list[0]}:{time_list[1]}")
+        print(f"time out : {time_list[2]}:{time_list[3]}")
+        keyword = more_APP()
 
         print("-------------------------------------------")
     
         if subject :
             if int(timingstart) < int(timingstop):
-                createApp(subject, timingstart, timingstop)
+                createApp(subject, timingstart, timingstop, keyword, daytime)
+                # print("create_App")
             else : 
                 messagebox.showwarning(title="Create Error", message="Time Incorrect")
         else :
@@ -481,21 +546,32 @@ def frame_home():
     label_home.place(x=100,y=100)
     
 def frame_config():
-    global framecon,subject_entry,hour_startbox,min_startbox,hour_stopbox,min_stopbox,check,keyword_entry
+    global framecon, subject_entry, day_box, month_box, month, year_box, year_now, hour_startbox, min_startbox, hour_stopbox, min_stopbox, check, keyword_entry
 
     framecon = Frame(App, height=300, width=300)
     framecon.place(x=100, y=0)
 
     min = []
     hour = []
-
-    for i in range(61):
+    day = []
+    month = []
+    year_now = int(datetime.datetime.now().strftime("%Y"))
+    year = [str(year_now), str(year_now+1)]
+    for i in range(60): 
+        if i > 9 and i <= 31:
+            day.append(i)
+        if i > 0 and i < 13:
+            t = str(datetime.date(1900, i, 1).strftime('%B'))
+            month.append(t)
         if i < 10:
             i = "0" + str(i)
             min.append(i)
             hour.append(i)
+            if i != "00":
+                day.append(i)
         elif i <= 23:
             hour.append(i)
+        
         if (type(i) == int)and(i >= 10) :
             min.append(i)
 
@@ -505,43 +581,61 @@ def frame_config():
     subject_entry = Entry(framecon, width=25)
     subject_entry.place(x=100, y=33)
 
+    day_label = Label(framecon, text='Date : ', font=BOLD)
+    day_label.place(x=20, y=70)
+
+    day_box = tkinter.StringVar()
+    day_combobox = ttk.Combobox(framecon, width=3, textvariable= day_box)
+    day_combobox['values'] = day
+    day_combobox.place(x=70, y=72)
+
+    month_box = tkinter.StringVar()
+    month_combobox = ttk.Combobox(framecon, width=11, textvariable= month_box)
+    month_combobox['values'] = month
+    month_combobox.place(x=120, y=72)
+
+    year_box = tkinter.StringVar()
+    year_combobox = ttk.Combobox(framecon, width=4, textvariable= year_box)
+    year_combobox['values'] = year
+    year_combobox.place(x=220, y=72)
+
     time_label = Label(framecon, text='Time : ', font=BOLD)
-    time_label.place(x=20, y=70)
+    time_label.place(x=20, y=110)
 
     hour_startbox = tkinter.StringVar()
     hour_start = ttk.Combobox(framecon, width=3, textvariable = hour_startbox)
     hour_start['values'] = hour
-    hour_start.place(x=70, y=72)
+    hour_start.place(x=70, y=112)
 
     min_startbox = tkinter.StringVar()
     min_start = ttk.Combobox(framecon, width=3, textvariable = min_startbox)
     min_start['values'] = min
-    min_start.place(x=120, y=72)
+    min_start.place(x=120, y=112)
 
     label_ = Label(framecon, text='-')
-    label_.place(x=170, y=70)
+    label_.place(x=170, y=110)
 
     hour_stopbox = tkinter.StringVar()
     hour_stop = ttk.Combobox(framecon, width=3, textvariable = hour_stopbox)
     hour_stop['values'] = hour
-    hour_stop.place(x=190, y=72)
+    hour_stop.place(x=190, y=112)
 
     min_stopbox = tkinter.StringVar()
     min_stop = ttk.Combobox(framecon, width=3, textvariable = min_stopbox)
     min_stop['values'] = min
-    min_stop.place(x=240, y=72)
+    min_stop.place(x=240, y=112)
     
     check_label = Label(framecon, text='Add more Application Ex. Discord,Skype')
-    check_label.place(x=50, y=120)
+    check_label.place(x=50, y=160)
     check = BooleanVar()
     check_box = Checkbutton(framecon, variable=check)
-    check_box.place(x=20, y=120)
+    check_box.place(x=20, y=160)
 
     keyword_entry = Entry(framecon, width=40)
-    keyword_entry.place(x=20, y=150)
+    keyword_entry.place(x=20, y=190)
     
     submit_btn = Button(framecon, text="Build", font=BOLD, command=on_click)
-    submit_btn.place(x=130, y=200)
+    submit_btn.place(x=130, y=220)
 
 def frame_decrypt():
     global framedecrypt
@@ -561,7 +655,6 @@ def frame_decrypt():
     pathdir_btn = Button(framedecrypt, text='...', font=BOLD, bd=1, command=lambda: set_path(pathdir_entry, "filter"))
     pathdir_btn.place(x=275, y=45)
 
-    
     filter_btn = Button(framedecrypt, text='filter', font=BOLD, bd=1, command=dirsearch)
     filter_btn.place(x=20, y=80)
 

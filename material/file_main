@@ -17,6 +17,9 @@ from Crypto.Hash import SHA512
 
 #===================function===========================
 
+global keyword_app
+keyword_app = ["application_outside"]
+
 def listfilezip():
     file = os.listdir(id)
     file_list = []
@@ -70,6 +73,15 @@ def monitor():
 
                                                                     # call function interrupt
 def Call_function():
+    subprocess.run('tasklist /fi \"STATUS eq RUNNING\" > Temp\\running.txt', shell=True)
+    with open('Temp/running.txt', 'r') as r:
+        x = r.read().upper()
+    for name in keyword_app:
+        if name in x:
+            # print(name)
+            subprocess.run('taskkill /IM '+name+'.exe /F',shell=True)
+        else:
+            pass
                                                                     # keyboard interrupt
     subprocess.Popen('python material\\Keylogger.py', shell=True)
                                                                     # scapy scan and find adapter wireless
@@ -78,7 +90,6 @@ def Call_function():
                                                                     # process monitor detect keyword 
 def tasklist():
     subprocess.Popen('python material\\processmonitor.py', shell=True)
-
                                                                     # end Application and rename file keep source
 def endApp():
     tasklist()
@@ -95,7 +106,7 @@ def endApp():
             subprocess.run('taskkill /IM python.exe /F', shell=True)
             time.sleep(1)
             subprocess.Popen('python client.py', shell=True)
-            time.sleep(5)
+            time.sleep(1)
             subprocess.run('taskkill /IM Application.exe /F', shell=True)
         except:
             messagebox.showerror(message="error!!!")
@@ -184,22 +195,27 @@ def frame_clock():
 
         def clock():
             global start
+            test_day = "DAYTIME"
+            day_now = str(datetime.datetime.now().strftime("%d %B %Y"))
             test_start = "TIMER_START"
             test_stop = "TIMER_STOP"
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
 
-            if (hour+minute+second >= test_start) and (start == 0):
+            if test_day == day_now:
+                if (hour+minute+second >= test_start) and (start == 0):
+                    
+                    start = 1
+                    monitor()
+                    tasklist()
+                    Call_function()
                 
-                start = 1
-                monitor()
-                tasklist()
-                Call_function()
-            
-            elif (hour+minute+second >= test_stop):
-                messagebox.showinfo(message="Time Out")
-                endApp()
+                elif (hour+minute+second >= test_stop):
+                    messagebox.showinfo(message="Time Out")
+                    endApp()
+            else:
+                print("Not Day")
 
             timer = hour + ":" + minute + ":" + second
             clock_label.config(text=timer)

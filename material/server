@@ -1,39 +1,65 @@
 import socket
+import threading
 
-host = "HOST_IP_SERVER"
-port = 8080
-rawdata = ''
-folder = ''
+SERVER = "HOST_IP_SERVER"
+PORT = 8080
 CONNECT = True
 
-s = socket.socket()
-s.bind((host, port))
-s.listen()
+ADDR = (SERVER, PORT)
+DISCONNECTED = "disconnect"
+socket_client = []
 
-print(f"[{host}] Waiting Incoming ......")
-conn, addr = s.accept()
-print(addr, " Connected....")
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(ADDR)
 
-while CONNECT:
-    file_data = conn.recv(2048)
-     
-    if file_data:
-        if file_data[:5] == '[seq]':
-            rawdata = rawdata + file_data[5:]
-        elif '[zip]' in str(file_data):
-            folder = folder + file_data[5:].decode('utf-8')
-            filename = f"{folder}"
-            print(f"filename : {filename}")
-        else:
-            # print(f"[{folder} Create....]")
-            rawdata = rawdata = file_data
-            # filename = f"{addr[0]}.zip"
-            file = open(filename, 'ab')
-            # print(rawdata)
-            file.write(rawdata)
-            file.close()
-            rawdata = ''
-        if 'DISCONNECT' in str(file_data) :
-            conn.close()
-            print("Success....")
-            CONNECT = False  
+def handle_client(conn, addr):
+    print(f"[NEW CONNECTION] : {addr} connected.\n")
+    socket_client.append(addr[1])
+    # print(socket_client)
+    connected = True
+    i = 0 
+    for port in socket_client:
+        if port != addr[1]:
+            i += 1
+
+    while connected:
+        rawdata = ''
+        folder = ''
+        file_data = conn.recv(2048)
+        if file_data:
+            if file_data[:5] == '[seq]':
+                rawdata = rawdata + file_data[5:]
+            elif '[zip]' in str(file_data):
+                folder = folder + file_data[5:].decode('utf-8')
+                filename = f"{folder}"
+                print(f"filename : {filename}")
+            else:
+                # print(f"[{folder} Create....]")
+                rawdata = rawdata = file_data
+                # filename = f"{addr[0]}.zip"
+                file = open(filename, 'ab')
+                # print(rawdata)
+                file.write(rawdata)
+                file.close()
+                rawdata = ''
+            if 'DISCONNECT' in str(file_data) :
+                print("Success....")
+                connected = False
+                print(f"{DISCONNECTED} ADDR [{addr[1]}]")
+                socket_client.pop(i)
+        
+    conn.close()        
+
+def start():
+    
+    server.listen()
+    print(f"[LISTENING] SERVER ..... ")
+
+    while True:
+        conn, addr = server.accept()
+        thread = threading.Thread(target=handle_client, args=(conn, addr))
+        thread.start()
+        print(f"[ACCEPT CONNECTION] : {threading.activeCount() - 1}")
+
+print("[START] SERVER.....")
+start()
