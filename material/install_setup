@@ -12,5 +12,5 @@ try:
 except:
     pass
 
-subprocess.run('pyinstaller --onefile -i material/icon2.ico Main_App.py', shell=True)
+subprocess.run('pyinstaller --onefile -i material/icon2.ico --noconsole Main_App.py', shell=True)
 subprocess.run('copy dist\Main_App.exe Application.exe', shell=True)
