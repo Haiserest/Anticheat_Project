@@ -109,6 +109,7 @@ def createApp(subject, time_start, time_stop, keyword, daytime):
     main_app = main_app.replace("TIMER_START", time1)
     main_app = main_app.replace("TIMER_STOP", time2)
     main_app = main_app.replace("DAYTIME", daytime)
+    main_app = main_app.replace("Name_Subject", subject)
     app_exe = ''
     for k in range(len(keyword)):
         app_exe = f"{app_exe}'{keyword[k]}'"
@@ -231,6 +232,9 @@ def on_click():
         elif int(m) == int(month_now):
             if int(day_list[0]) < int(day_now):
                 err = 1
+    
+    
+
     if int(day_list[0]) < 0:
         err = 1
     if int(day_list[0]) > 32:
@@ -250,48 +254,48 @@ def on_click():
                     err = 1
     if err == 1:
         messagebox.showerror(title="Invalid", message="Date Invalid!!")
-
-    i = 0
-    err = 0
-
-    while i != len(time_list):
-        if (len(time_list[i]) == 0):
-            time_list[i] = "00"
-        elif (len(time_list[i]) == 1):
-            time_list[i] = "0" + time_list[i]
-        elif (len(time_list[i]) > 2):
-            err = 1
-        if int(time_list[i]) < 0:
-            err = 1
-        if i%2 == 0:
-            if int(time_list[i]) > 23:
-                err = 1
-        elif i%2 == 1:
-            if int(time_list[i]) > 59:
-                err = 1
-        i+=1
-    if err:
-        messagebox.showerror(title="Invalid", message="Time Invalid!!")
     else:
-        timingstart = str(time_list[0]) + str(time_list[1]) + "00"
-        timingstop = str(time_list[2]) + str(time_list[3]) + "00"
-        daytime = f"{day_list[0]} {day_list[1]} {day_list[2]}"
-        print(f"Subject : {subject}")
-        print(f"Date : {daytime}")
-        print(f"time start : {time_list[0]}:{time_list[1]}")
-        print(f"time out : {time_list[2]}:{time_list[3]}")
-        keyword = more_APP()
+        i = 0
+        err = 0
 
-        print("-------------------------------------------")
-    
-        if subject :
-            if int(timingstart) < int(timingstop):
-                createApp(subject, timingstart, timingstop, keyword, daytime)
-                # print("create_App")
-            else : 
-                messagebox.showwarning(title="Create Error", message="Time Incorrect")
-        else :
-            messagebox.showwarning(title="Create Error", message="Subject Incorrect")
+        while i != len(time_list):
+            if (len(time_list[i]) == 0):
+                time_list[i] = "00"
+            elif (len(time_list[i]) == 1):
+                time_list[i] = "0" + time_list[i]
+            elif (len(time_list[i]) > 2):
+                err = 1
+            if int(time_list[i]) < 0:
+                err = 1
+            if i%2 == 0:
+                if int(time_list[i]) > 23:
+                    err = 1
+            elif i%2 == 1:
+                if int(time_list[i]) > 59:
+                    err = 1
+            i+=1
+        if err:
+            messagebox.showerror(title="Invalid", message="Time Invalid!!")
+        else:
+            timingstart = str(time_list[0]) + str(time_list[1]) + "00"
+            timingstop = str(time_list[2]) + str(time_list[3]) + "00"
+            daytime = f"{day_list[0]} {day_list[1]} {day_list[2]}"
+            print(f"Subject : {subject}")
+            print(f"Date : {daytime}")
+            print(f"time start : {time_list[0]}:{time_list[1]}")
+            print(f"time out : {time_list[2]}:{time_list[3]}")
+            keyword = more_APP()
+
+            print("-------------------------------------------")
+        
+            if subject :
+                if int(timingstart) < int(timingstop):
+                    createApp(subject, timingstart, timingstop, keyword, daytime)
+                    # print("create_App")
+                else : 
+                    messagebox.showwarning(title="Create Error", message="Time Incorrect")
+            else :
+                messagebox.showwarning(title="Create Error", message="Subject Incorrect")
 
 def set_path(entry_field, pathinput):
 
@@ -539,11 +543,15 @@ def main_frame():
 def frame_home():
     global framehome
 
+    text_home = "\n  \tAnticheat Application \n\n\
+    Create : \n\n หน้าสำหรับการสร้างโปรแกรมให้ผู้สอบ\n\n\
+    Option : \n\n หน้าสำหรับการตรวจสอบไฟล์ของผู้สอบ"
+
     framehome = Frame(App, height=300, width=300)
     framehome.place(x=100, y=0)
 
-    label_home = Label(framehome, text='Home Page', font=BOLD)
-    label_home.place(x=100,y=100)
+    label_home = Label(framehome, text=text_home, font=BOLD, anchor="e", justify=LEFT)
+    label_home.place(x=10,y=0)
     
 def frame_config():
     global framecon, subject_entry, day_box, month_box, month, year_box, year_now, hour_startbox, min_startbox, hour_stopbox, min_stopbox, check, keyword_entry
@@ -684,7 +692,7 @@ def frame_decrypt():
     decrypt_btn.place(x=20, y=260)
 
 App = tkinter.Tk()
-App.title("Anticheat Config")
+App.title("Anticheat")
 App.geometry("400x300")
 App.iconbitmap('material/icon2.ico')
 
