@@ -162,14 +162,19 @@ def frame_id():
 
     frametest = Frame(Application, height=150, width=300)
     frametest.place(x=0, y=0)
+
+    subject = "Name_Subject"
+
+    subject_label = Label(frametest, text=f"Test : {subject}", font=BOLD)
+    subject_label.place(x=30, y=15)
     
     label_id = Label(frametest, text="ID : ")
-    label_id.place(x=30, y=40)
+    label_id.place(x=30, y=50)
 
     id_std = StringVar()
 
     entry_id = Entry(frametest, width=30, textvariable= id_std)
-    entry_id.place(x=60, y=43)
+    entry_id.place(x=60, y=53)
 
     btn_submit = Button(frametest, text="Submit", command=sumbit)
     btn_submit.place(x=120, y=100)
@@ -215,7 +220,7 @@ def frame_clock():
                     messagebox.showinfo(message="Time Out")
                     endApp()
             else:
-                print("Not Day")
+                messagebox.showinfo(message=f"Test Will Start in {test_day}")
 
             timer = hour + ":" + minute + ":" + second
             clock_label.config(text=timer)
