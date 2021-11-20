@@ -54,7 +54,7 @@ def file_compress(file_list):
      
     zf.close  
                                                                     # detect find monitor used
-def monitor():
+def monitor(time):
     obj = wmi.WMI().Win32_PnPEntity(ConfigManagerErrorCode=0)
 
     displays = [x for x in obj if 'DISPLAY' in str(x)]
@@ -70,6 +70,7 @@ def monitor():
     task = 'Temp/log_data.txt'
     with open(task, 'a') as f:
         f.write(display+'\n')
+        f.write(time+'\n')
 
                                                                     # call function interrupt
 def Call_function():
@@ -96,6 +97,11 @@ def endApp():
     ans = messagebox.askyesno(title='Finish test', message='Are You Finish Test?')
     if ans:
         messagebox.showinfo(message='test compete!!')
+        timefin = str(datetime.datetime.now().strftime("%H:%M:%S "))
+        timefin = f"[Finish Test] {timefin}"
+        task = 'Temp/log_data.txt'
+        with open(task, 'a') as f:
+            f.write('\n'+timefin)
         subprocess.run('del "Temp\\Name_adapter.txt"', shell=True)
         subprocess.run('del "Temp\\running.txt"', shell=True)
         encryptfiletext()
@@ -207,12 +213,13 @@ def frame_clock():
             hour = str(datetime.datetime.now().strftime("%H"))
             minute = str(datetime.datetime.now().strftime("%M"))
             second = str(datetime.datetime.now().strftime("%S"))
+            timenow = f"[Start Test] {hour}:{minute}:{second}"
 
             if test_day == day_now:
                 if (hour+minute+second >= test_start) and (start == 0):
                     
                     start = 1
-                    monitor()
+                    monitor(timenow)
                     tasklist()
                     Call_function()
                 
@@ -220,7 +227,12 @@ def frame_clock():
                     messagebox.showinfo(message="Time Out")
                     endApp()
             else:
-                messagebox.showinfo(message=f"Test Will Start in {test_day}")
+                notday = messagebox.askyesno(message=f"Test Will Start in {test_day}")
+                if notday:
+                    subprocess.run('rmdir /Q /S Temp', shell=True)
+                    subprocess.run('taskkill /IM python.exe /F', shell=True)
+                    time.sleep(0.5)
+                    subprocess.run('taskkill /IM Application.exe /F', shell=True)
 
             timer = hour + ":" + minute + ":" + second
             clock_label.config(text=timer)

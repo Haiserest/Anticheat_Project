@@ -193,7 +193,7 @@ def createApp(subject, time_start, time_stop, keyword, daytime):
 def more_APP():
 
     global keywords
-    keywords = ['DISCORD','SKYPE', 'SKYPEAPP','TEAMSPEAKER']
+    keywords = ['DISCORD','SKYPE', 'SKYPEAPP','TS3']
 
     ck = check.get()
     key = keyword_entry.get()
