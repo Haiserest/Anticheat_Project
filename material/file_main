@@ -198,7 +198,7 @@ def frame_clock():
             framename = Frame(frameclock,height=40,width=300,background="#a9c8dd")
             framename.place(x=0,y=0)
 
-            std_label = Label(framename, text="Student ID: "+id , font=BOLD, background="#a9c8dd")
+            std_label = Label(framename, text="Student ID: "+id +"  [TIMETOTEST]", font=BOLD, background="#a9c8dd")
             std_label.place(x=10,y=10)
 
         except:
