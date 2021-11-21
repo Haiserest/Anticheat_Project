@@ -76,7 +76,7 @@ def generateRSAkey(subject):
 
 #====================================== function ==================================
 
-def createApp(subject, time_start, time_stop, keyword, daytime):
+def createApp(subject, time_start, time_stop, ts, tf, keyword, daytime):
     
     subprocess.run("mkdir "+subject, shell=True)
 
@@ -106,10 +106,12 @@ def createApp(subject, time_start, time_stop, keyword, daytime):
         
     time1 =str(time_start)
     time2 =str(time_stop)
+    tt = f"{ts} - {tf}"
     main_app = main_app.replace("TIMER_START", time1)
     main_app = main_app.replace("TIMER_STOP", time2)
     main_app = main_app.replace("DAYTIME", daytime)
     main_app = main_app.replace("Name_Subject", subject)
+    main_app = main_app.replace("TIMETOTEST", tt)
     app_exe = ''
     for k in range(len(keyword)):
         app_exe = f"{app_exe}'{keyword[k]}'"
@@ -202,6 +204,8 @@ def more_APP():
         k = key.split(',')
         for count in range(len(k)):
             keywords.append(k[count].upper())
+            k_app = k[count]+"app"
+            keywords.append(k_app.upper())
     else:
         pass
     return keywords
@@ -280,17 +284,19 @@ def on_click():
             timingstart = str(time_list[0]) + str(time_list[1]) + "00"
             timingstop = str(time_list[2]) + str(time_list[3]) + "00"
             daytime = f"{day_list[0]} {day_list[1]} {day_list[2]}"
+            ts = f"{time_list[0]}:{time_list[1]}"
+            tf = f"{time_list[2]}:{time_list[3]}"
             print(f"Subject : {subject}")
             print(f"Date : {daytime}")
-            print(f"time start : {time_list[0]}:{time_list[1]}")
-            print(f"time out : {time_list[2]}:{time_list[3]}")
+            print(f"time start : {ts}")
+            print(f"time out : {tf}")
             keyword = more_APP()
 
             print("-------------------------------------------")
         
             if subject :
                 if int(timingstart) < int(timingstop):
-                    createApp(subject, timingstart, timingstop, keyword, daytime)
+                    createApp(subject, timingstart, timingstop, ts, tf, keyword, daytime)
                     # print("create_App")
                 else : 
                     messagebox.showwarning(title="Create Error", message="Time Incorrect")
@@ -535,7 +541,7 @@ def main_frame():
     btn_config = Button(frame_main, text="Create",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_config)
     btn_config.place(x=10, y=70)
 
-    btn_decreypt = Button(frame_main, text="Option",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_decrypt)
+    btn_decreypt = Button(frame_main, text="Result",font=BOLD,bd=0,foreground='#ffffff', background='#65728d',command=frame_decrypt)
     btn_decreypt.place(x=10, y=110)
 
     frame_home()
@@ -545,7 +551,7 @@ def frame_home():
 
     text_home = "\n  \tAnticheat Application \n\n\
     Create : \n\n หน้าสำหรับการสร้างโปรแกรมให้ผู้สอบ\n\n\
-    Option : \n\n หน้าสำหรับการตรวจสอบไฟล์ของผู้สอบ"
+    Result : \n\n หน้าสำหรับการตรวจสอบไฟล์ของผู้สอบ"
 
     framehome = Frame(App, height=300, width=300)
     framehome.place(x=100, y=0)
