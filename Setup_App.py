@@ -442,32 +442,35 @@ def text_decrypt(file):
     namepathpvt = key_path + '/Private_Key.pem'
     pvt = RSA.import_key(open(namepathpvt, 'rb').read())
     pvtkey = PKCS1_v1_5.new(pvt)
-    obj = pvtkey.decrypt(lock, Random.new().read)
+    try :
+        obj = pvtkey.decrypt(lock, Random.new().read)
 
-    digest = SHA512.new()
-    digest.update(text)
-    print("text : ",digest.digest())
+        digest = SHA512.new()
+        digest.update(text)
+        print("text : ",digest.digest())
+    
+        if obj == digest.digest() :
+            print("true")
 
-    if obj == digest.digest() :
-        print("true")
+            with open(file, 'wb') as f:
+                f.write(text)
+            
+            with open(file, 'rb') as f:
+                iv = f.read(16)
+                tag = f.read(16)
+                textdata = f.read()
 
-        with open(file, 'wb') as f:
-            f.write(text)
-        
-        with open(file, 'rb') as f:
-            iv = f.read(16)
-            tag = f.read(16)
-            textdata = f.read()
+            # get AES key to decrypt text
+            cipher = AES.new(aeskey, AES.MODE_EAX, nonce=iv)
+            plaintext = cipher.decrypt_and_verify(textdata, tag).decode('UTF-8')
 
-        # get AES key to decrypt text
-        cipher = AES.new(aeskey, AES.MODE_EAX, nonce=iv)
-        plaintext = cipher.decrypt_and_verify(textdata, tag).decode('UTF-8')
+            with open(file, 'w') as f:
+                f.write(plaintext)
 
-        with open(file, 'w') as f:
-            f.write(plaintext)
-
-    else :
-        print("false")
+        else :
+            print("false")
+    except:
+        messagebox.showerror(message="Decrypt Error!!")
 
 def file_decrypt(files):
 
@@ -492,41 +495,44 @@ def picture_decrypt(filedir_):
 
     list_pic = os.listdir(filedir_)
     for eachfile in list_pic:
-        file = filedir_ + '/' + eachfile
-        print("decrypt picture : "+ file)
-        if ('.jpg' in eachfile) or ('.png' in eachfile):             
-            with open(file, 'rb') as f:
-                lock = f.read(256)
-                text = f.read()
-
-            namepathpvt = key_path + '/Private_Key.pem'
-            pvt = RSA.import_key(open(namepathpvt).read())
-            pvtkey = PKCS1_v1_5.new(pvt)
-            obj = pvtkey.decrypt(lock, Random.new().read)
-
-            digest = SHA512.new()
-            digest.update(text)
-            print("text : ",digest.digest())
-
-            if obj == digest.digest() :
-                print("true")
-
-                with open(file, 'wb') as f:
-                    f.write(text)
-
+        try :
+            file = filedir_ + '/' + eachfile
+            print("decrypt picture : "+ file)
+            if ('.jpg' in eachfile) or ('.png' in eachfile):             
                 with open(file, 'rb') as f:
-                    iv = f.read(16)
-                    data = f.read()
-                cipher = AES.new(k, AES.MODE_CBC, iv)
-                plaintext = cipher.decrypt(data)
+                    lock = f.read(256)
+                    text = f.read()
 
-                plaintext = unpad(plaintext, AES.block_size)
+                namepathpvt = key_path + '/Private_Key.pem'
+                pvt = RSA.import_key(open(namepathpvt).read())
+                pvtkey = PKCS1_v1_5.new(pvt)
+                obj = pvtkey.decrypt(lock, Random.new().read)
 
-                with open(file, 'wb') as f:
-                    f.write(plaintext)
+                digest = SHA512.new()
+                digest.update(text)
+                print("text : ",digest.digest())
 
-            else :
-                print("false")
+                if obj == digest.digest() :
+                    print("true")
+
+                    with open(file, 'wb') as f:
+                        f.write(text)
+
+                    with open(file, 'rb') as f:
+                        iv = f.read(16)
+                        data = f.read()
+                    cipher = AES.new(k, AES.MODE_CBC, iv)
+                    plaintext = cipher.decrypt(data)
+
+                    plaintext = unpad(plaintext, AES.block_size)
+
+                    with open(file, 'wb') as f:
+                        f.write(plaintext)
+
+                else :
+                    print("false")
+        except:
+            messagebox.showerror(message="Decrypt Error!!")
 
 #========================================= UI =====================================
 def main_frame():

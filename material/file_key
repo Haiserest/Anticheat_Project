@@ -117,7 +117,7 @@ def keystroke(key):
         if (lt==1) or (key == "Key.space"):
             with open(filecheck, 'r') as f:
                 searchword = f.read()
-            wordkey =  ['ข้อนี้ตอบอะไร', 'ตอบอะไร', 'ทำยังไง', 'ได้เท่าไหร่', 'มีอะไรบ้าง']    
+            wordkey =  ['ข้อนี้ตอบอะไร', 'ตอบอะไร', 'ตอบอัไร', 'ทำยังไง', 'ทำไง', 'ได้เท่าไหร่', 'มีอะไรบ้าง', 'มึง', 'ว่าไง']    
 
             for key_word in wordkey:
                 if key_word in searchword:
