@@ -28,7 +28,7 @@ def tasklist():
             with open(task, 'a') as f:
                 tasktime = str(datetime.datetime.now().strftime('\nTime %H:%M:%S '))
                 f.write(tasktime)
-                f.write(detect)
+                f.write(detect+' ')
                 f.close()
         else:
             # print("pass")

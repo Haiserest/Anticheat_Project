@@ -76,7 +76,7 @@ def parse_packet(packet):
                 encryptfile(file_packet)
                 task = 'Temp/log_data.txt'
                 with open(task, 'a') as f:
-                    f.write(tasktime + i)
+                    f.write(tasktime + i + '\n')
         time.sleep(0.6)
         
 def udp_sniffer(adapter):
